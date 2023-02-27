@@ -5,12 +5,10 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import pt.solutions.af.appointment.model.ServiceType;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.Instant;
-import java.time.LocalDateTime;
 
 @Getter
 @AllArgsConstructor(staticName = "of")
@@ -30,8 +28,8 @@ public class RegisterAppointmentDTO {
     @NotNull(message = "{RegisterAppointmentDTO.endDate.NotNull}")
     private Instant endDate;
 
-    @NotBlank(message = "{RegisterAppointmentDTO.serviceType.NotBlank}")
-    private String serviceType;
+    @NotBlank(message = "{RegisterAppointmentDTO.serviceTypeId.NotBlank}")
+    private String serviceTypeId;
 
 }
 

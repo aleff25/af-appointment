@@ -5,7 +5,6 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import pt.solutions.af.appointment.application.dto.RegisterAppointmentDTO;
 import pt.solutions.af.appointment.model.Appointment;
-import pt.solutions.af.appointment.model.ServiceType;
 import pt.solutions.af.appointment.repository.AppointmentRepository;
 
 import java.time.LocalDateTime;
@@ -23,7 +22,7 @@ public class AppointmentApplicationService {
         Appointment appointment = Appointment.builder()
                 .clientId(dto.getClientId())
                 .providerId(dto.getProviderId())
-                .serviceType(ServiceType.valueOf(dto.getServiceType()))
+                .serviceTypeId(dto.getServiceTypeId())
                 .startDate(LocalDateTime.ofInstant(dto.getStartDate(), ZoneId.systemDefault()))
                 .endDate(LocalDateTime.ofInstant(dto.getEndDate(), ZoneId.systemDefault()))
                 .build();

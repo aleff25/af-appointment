@@ -40,18 +40,18 @@ public class Appointment {
     @OneToOne(targetEntity = User.class, fetch = FetchType.LAZY)
     private UserView client;
 
-    private ServiceType serviceType;
+    private String serviceTypeId;
 
     @Builder
     public Appointment(final LocalDateTime startDate, final LocalDateTime endDate, final String providerId,
                        final UserView provider, final String clientId, final UserView client,
-                       final ServiceType serviceType) {
+                       final String serviceTypeId) {
         this.startDate = startDate;
         this.endDate = endDate;
         this.providerId = providerId;
         this.provider = provider;
         this.clientId = clientId;
         this.client = client;
-        this.serviceType = serviceType;
+        this.serviceTypeId = serviceTypeId;
     }
 }
