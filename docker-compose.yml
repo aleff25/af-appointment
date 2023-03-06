@@ -1,0 +1,29 @@
+version: '3.7'
+
+services:
+  backend:
+    image: aleff25/af-appointment:1.0-SNAPSHOT
+    ports:
+      - "9094:9094"
+    restart: always
+    depends_on:
+      - database
+
+  database:
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    restart: always
+    environment:
+      POSTGRES_DB: af_appointment
+      POSTGRES_PASSWORD:
+    volumes:
+      - af_appointment_database
+    networks:
+      - af_appointment_network
+
+volumes:
+  af_appointment_database:
+
+networks:
+  af_appointment_network:
