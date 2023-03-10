@@ -30,28 +30,15 @@ public class Appointment {
     private LocalDateTime endDate;
     private String providerId;
 
-    @JoinColumn(name = "providerId", insertable = false, updatable = false)
+    @JoinColumn(name = "provider_id", insertable = false, updatable = false)
     @OneToOne(targetEntity = User.class, fetch = FetchType.LAZY)
     private UserView provider;
 
-    private String clientId;
+    private String custumerId;
 
-    @JoinColumn(name = "clientId", insertable = false, updatable = false)
+    @JoinColumn(name = "customer_id", insertable = false, updatable = false)
     @OneToOne(targetEntity = User.class, fetch = FetchType.LAZY)
-    private UserView client;
+    private UserView customer;
 
-    private String serviceTypeId;
 
-    @Builder
-    public Appointment(final LocalDateTime startDate, final LocalDateTime endDate, final String providerId,
-                       final UserView provider, final String clientId, final UserView client,
-                       final String serviceTypeId) {
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.providerId = providerId;
-        this.provider = provider;
-        this.clientId = clientId;
-        this.client = client;
-        this.serviceTypeId = serviceTypeId;
-    }
 }

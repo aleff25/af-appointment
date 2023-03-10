@@ -5,35 +5,46 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
+import pt.solutions.af.commons.entity.BaseEntity;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 
 @Data
 @Table(name = "users")
 @Entity
 @NoArgsConstructor
-public class User {
+@Inheritance(strategy = InheritanceType.JOINED)
+public class User extends BaseEntity {
 
     @Id
-    @GeneratedValue(generator="system-uuid")
-    @GenericGenerator(name="system-uuid", strategy = "uuid")
+    @GeneratedValue(generator = "system-uuid")
+    @GenericGenerator(name = "system-uuid", strategy = "uuid")
     private String id;
-    private String name;
+    private String firstName;
+    private String lastName;
     private String email;
     private String phoneNumber;
-
     private boolean provider;
-
+    private String street;
+    private String city;
+    private String postCode;
 
     @Builder
-    public User(final String id, final String name, final String email, final String phoneNumber,
-                final boolean provider) {
+    public User(String id, String firstName, String lastName, String email, String phoneNumber, boolean provider,
+                String street, String city, String postCode) {
         this.id = id;
-        this.name = name;
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.email = email;
         this.phoneNumber = phoneNumber;
+        this.provider = provider;
+        this.street = street;
+        this.city = city;
+        this.postCode = postCode;
     }
 }
