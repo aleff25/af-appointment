@@ -1,5 +1,7 @@
 package pt.solutions.af.user.application;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pt.solutions.af.user.model.User;
 import pt.solutions.af.user.repository.UserRepository;
@@ -7,6 +9,8 @@ import pt.solutions.af.user.repository.UserRepository;
 import java.util.List;
 
 @Service
+@AllArgsConstructor
+@Slf4j
 public class UserApplicationService {
 
     private UserRepository userRepository;
@@ -25,5 +29,10 @@ public class UserApplicationService {
 
     public User findByEmail(String email) {
         return  userRepository.findByEmailEqualsIgnoreCase(email);
+    }
+
+    //TODO: Add the exception
+    public User findById(String id) {
+        return  userRepository.findById(id).orElseThrow();
     }
 }

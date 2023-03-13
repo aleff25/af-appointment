@@ -20,7 +20,7 @@ public class AppointmentController {
 
     @PostMapping()
     public ResponseEntity<Void> create(@Valid @RequestBody RegisterAppointmentDTO dto) {
-        service.register(dto);
+        service.create(dto);
 
         return ResponseEntity.ok().build();
     }

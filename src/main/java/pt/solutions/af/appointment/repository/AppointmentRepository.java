@@ -13,4 +13,16 @@ public interface AppointmentRepository extends JpaRepository<Appointment, String
 
     @Query(value = "from Appointment t where t.startDate >=  FORMATDATETIME(:startDate, 'yyyy-MM-dd hh:mm') AND t.endDate <= FORMATDATETIME(:endDate, 'yyyy-MM-dd hh:mm')")
     List<Appointment> getAllBetweenDates(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
+
+    List<Appointment> findAllByProviderId(String providerId);
+
+    List<Appointment> findAllByCustomerId(String customerId);
+
+    @Query("select a from Appointment a where a.provider.id = :providerId and  a.startDate >=:dayStart and  a.startDate <=:dayEnd")
+    List<Appointment> findByProviderIdWithStartInPeriod(@Param("providerId") String providerId, @Param("dayStart") LocalDateTime startDate, @Param("dayEnd") LocalDateTime endDate);
+
+    @Query("select a from Appointment a where a.customer.id = :customerId and  a.startDate >=:dayStart and  a.startDate <=:dayEnd")
+    List<Appointment> findByCustomerIdWithStartInPeriod(@Param("customerId") String customerId, @Param("dayStart") LocalDateTime startDate, @Param("dayEnd") LocalDateTime endDate);
+
+
 }

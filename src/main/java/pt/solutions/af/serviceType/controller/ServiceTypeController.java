@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import pt.solutions.af.appointment.application.dto.RegisterAppointmentDTO;
 import pt.solutions.af.serviceType.application.ServiceTypeApplicationService;
 import pt.solutions.af.serviceType.application.dto.RegisterServiceTypeDTO;
 

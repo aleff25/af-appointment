@@ -3,32 +3,32 @@ package pt.solutions.af.appointment.model;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
+import pt.solutions.af.commons.entity.BaseEntity;
 import pt.solutions.af.user.model.User;
 import pt.solutions.af.user.model.UserView;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Table(name = "appointments")
 @Entity
 @NoArgsConstructor
-public class Appointment {
+public class Appointment extends BaseEntity {
 
-    @Id
-    @GeneratedValue(generator="system-uuid")
-    @GenericGenerator(name="system-uuid", strategy = "uuid")
-    private String id;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private String providerId;
+
+    @Enumerated(EnumType.STRING)
+    private AppointmentStatusEnum status;
+
+    @Type(type = "json")
+    @Column(columnDefinition = "json", name = "status_changes")
+    private List<AppointmentStatus> statusChanges = new ArrayList<>();
 
     @JoinColumn(name = "provider_id", insertable = false, updatable = false)
     @OneToOne(targetEntity = User.class, fetch = FetchType.LAZY)
@@ -41,4 +41,16 @@ public class Appointment {
     private UserView customer;
 
 
+    @Builder
+    public Appointment(LocalDateTime startDate, LocalDateTime endDate, String providerId, String custumerId) {
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.providerId = providerId;
+        this.custumerId = custumerId;
+    }
+
+    public void newAppointment() {
+        this.status = AppointmentStatusEnum.SCHEDULED;
+        this.statusChanges.add(AppointmentStatus.ofScheduled());
+    }
 }

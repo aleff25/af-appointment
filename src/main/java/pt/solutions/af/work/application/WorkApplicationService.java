@@ -4,8 +4,9 @@ package pt.solutions.af.work.application;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+import pt.solutions.af.user.application.UserApplicationService;
 import pt.solutions.af.user.model.customer.Customer;
-import pt.solutions.af.work.exceptions.WorkNotFoundException;
+import pt.solutions.af.work.exception.WorkNotFoundException;
 import pt.solutions.af.work.model.Work;
 import pt.solutions.af.work.repository.WorkRepository;
 
@@ -17,6 +18,8 @@ import java.util.List;
 public class WorkApplicationService {
 
     private WorkRepository repository;
+
+    private UserApplicationService userService;
 
     public Work getById(String workId) {
         return repository.findById(workId).orElseThrow(WorkNotFoundException::new);
@@ -45,11 +48,15 @@ public class WorkApplicationService {
     }
 
     public boolean isWorkForCustomer(String workId, String customerId) {
-        Customer customer = userService.getCustomerById(customerId);
-        Work work = getWorkById(workId);
-        if (customer.hasRole("ROLE_CUSTOMER_RETAIL") && !work.getTargetCustomer().equals("retail")) {
+        Customer customer = (Customer) userService.findById(customerId);
+        Work work = getById(workId);
+//        if (customer.hasRole("ROLE_CUSTOMER_RETAIL") && !work.getTargetCustomer().equals("retail")) {
+//            return false;
+//        } else return !customer.hasRole("ROLE_CUSTOMER_CORPORATE") || work.getTargetCustomer().equals("corporate");
+
+        if (!work.getTargetCustomer().equals("retail")) {
             return false;
-        } else return !customer.hasRole("ROLE_CUSTOMER_CORPORATE") || work.getTargetCustomer().equals("corporate");
+        } else return work.getTargetCustomer().equals("corporate");
     }
 
     public List<Work> getWorksByProviderId(String providerId) {

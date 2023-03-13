@@ -23,7 +23,6 @@ import java.time.LocalTime;
 public class WorkingPlan extends BaseEntity {
 
 
-    @Id
     @Column(name = "provider_id")
     private String providerId;
 

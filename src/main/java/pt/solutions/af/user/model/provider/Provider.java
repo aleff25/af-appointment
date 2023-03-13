@@ -22,6 +22,6 @@ public class Provider extends User {
     @JoinTable(name = "works_providers", joinColumns = @JoinColumn(name = "id_user"), inverseJoinColumns = @JoinColumn(name = "id_work"))
     private List<Work> works;
 
-    @OneToOne(mappedBy = "provider", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "providerId", cascade = CascadeType.ALL)
     private WorkingPlan workingPlan;
 }
