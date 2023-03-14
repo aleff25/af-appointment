@@ -6,13 +6,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 import pt.solutions.af.commons.entity.BaseEntity;
+import pt.solutions.af.notification.model.Notification;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import java.util.List;
 
 @Data
 @Table(name = "users")
@@ -33,6 +36,9 @@ public class User extends BaseEntity {
     private String street;
     private String city;
     private String postCode;
+
+    @OneToMany(mappedBy = "user")
+    private List<Notification> notifications;
 
     @Builder
     public User(String id, String firstName, String lastName, String email, String phoneNumber, boolean provider,

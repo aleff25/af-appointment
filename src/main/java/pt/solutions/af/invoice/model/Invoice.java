@@ -1,6 +1,9 @@
 package pt.solutions.af.invoice.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import pt.solutions.af.appointment.model.Appointment;
 import pt.solutions.af.commons.entity.BaseEntity;
 
@@ -14,6 +17,7 @@ import java.util.List;
 @Data
 @Entity
 @Table(name = "invoices")
+@NoArgsConstructor
 public class Invoice extends BaseEntity {
 
     private String number;
@@ -23,4 +27,13 @@ public class Invoice extends BaseEntity {
 
     @OneToMany(mappedBy = "invoice")
     private List<Appointment> appointments;
+
+    @Builder
+    public Invoice(String number, String status, double totalAmount, LocalDateTime issued, List<Appointment> appointments) {
+        this.number = number;
+        this.status = status;
+        this.totalAmount = totalAmount;
+        this.issued = issued;
+        this.appointments = appointments;
+    }
 }

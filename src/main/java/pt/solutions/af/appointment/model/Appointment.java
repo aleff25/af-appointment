@@ -7,6 +7,8 @@ import org.hibernate.annotations.Type;
 import pt.solutions.af.commons.entity.BaseEntity;
 import pt.solutions.af.user.model.User;
 import pt.solutions.af.user.model.UserView;
+import pt.solutions.af.user.model.customer.Customer;
+import pt.solutions.af.user.model.provider.Provider;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -32,13 +34,13 @@ public class Appointment extends BaseEntity {
 
     @JoinColumn(name = "provider_id", insertable = false, updatable = false)
     @OneToOne(targetEntity = User.class, fetch = FetchType.LAZY)
-    private UserView provider;
+    private Provider provider;
 
     private String custumerId;
 
     @JoinColumn(name = "customer_id", insertable = false, updatable = false)
     @OneToOne(targetEntity = User.class, fetch = FetchType.LAZY)
-    private UserView customer;
+    private Customer customer;
 
 
     @Builder
@@ -52,5 +54,10 @@ public class Appointment extends BaseEntity {
     public void newAppointment() {
         this.status = AppointmentStatusEnum.SCHEDULED;
         this.statusChanges.add(AppointmentStatus.ofScheduled());
+    }
+
+    public void invoiceAppointment() {
+        this.status = AppointmentStatusEnum.INVOICED;
+        this.statusChanges.add(AppointmentStatus.ofInvoiced());
     }
 }

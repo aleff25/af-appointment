@@ -48,7 +48,7 @@ public class WorkApplicationService {
     }
 
     public boolean isWorkForCustomer(String workId, String customerId) {
-        Customer customer = (Customer) userService.findById(customerId);
+//        Customer customer = (Customer) userService.findById(customerId);
         Work work = getById(workId);
 //        if (customer.hasRole("ROLE_CUSTOMER_RETAIL") && !work.getTargetCustomer().equals("retail")) {
 //            return false;

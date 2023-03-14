@@ -4,9 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pt.solutions.af.user.model.User;
+import pt.solutions.af.user.model.customer.Customer;
+import pt.solutions.af.user.model.provider.Provider;
+import pt.solutions.af.user.repository.CustomerRepository;
+import pt.solutions.af.user.repository.ProviderRepository;
 import pt.solutions.af.user.repository.UserRepository;
-
-import java.util.List;
+import pt.solutions.af.workingplan.model.WorkingPlan;
 
 @Service
 @AllArgsConstructor
@@ -14,21 +17,17 @@ import java.util.List;
 public class UserApplicationService {
 
     private UserRepository userRepository;
+    private CustomerRepository customerRepository;
+    private ProviderRepository providerRepository;
 
-    public List<User> findAllClients() {
-        return userRepository.findAllByProviderIs(false);
+    public Customer getCustomerById(String customerId) {
+        return customerRepository.getReferenceById(customerId);
     }
 
-    public List<User> findAllProviders() {
-        return userRepository.findAllByProviderIs(true);
-    }
-
-    public User findByName(String name) {
-        return  userRepository.findByNameEqualsIgnoreCase(name);
-    }
-
-    public User findByEmail(String email) {
-        return  userRepository.findByEmailEqualsIgnoreCase(email);
+    public void saveNewProvider() {
+        WorkingPlan workingPlan = WorkingPlan.generateDefaultWorkingPlan();
+        Provider provider = (Provider) Provider.builder().id("").build();
+        providerRepository.save(provider);
     }
 
     //TODO: Add the exception

@@ -21,6 +21,10 @@ public class AppointmentStatus implements Comparable<AppointmentStatus> {
         return new AppointmentStatus(AppointmentStatusEnum.SCHEDULED, ZonedDateTime.now(ZoneId.of("UTC")));
     }
 
+    public static AppointmentStatus ofInvoiced() {
+        return new AppointmentStatus(AppointmentStatusEnum.INVOICED, ZonedDateTime.now(ZoneId.of("UTC")));
+    }
+
     @Override
     public int compareTo(AppointmentStatus o) {
         return this.when.compareTo(o.when);
