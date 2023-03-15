@@ -6,11 +6,16 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import pt.solutions.af.commons.entity.BaseEntity;
+import pt.solutions.af.user.model.provider.Provider;
 import pt.solutions.af.utils.TimePeriod;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.MapsId;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.time.LocalTime;
 
@@ -23,8 +28,11 @@ import java.time.LocalTime;
 public class WorkingPlan extends BaseEntity {
 
 
-    @Column(name = "provider_id")
     private String providerId;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "providerId", insertable = false, updatable = false)
+    private Provider provider;
 
     @Type(type = "json")
     @Column(columnDefinition = "json", name = "monday")

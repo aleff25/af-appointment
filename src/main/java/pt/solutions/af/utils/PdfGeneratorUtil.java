@@ -2,6 +2,8 @@ package pt.solutions.af.utils;
 
 import com.itextpdf.text.DocumentException;
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring5.SpringTemplateEngine;
@@ -9,17 +11,19 @@ import org.xhtmlrenderer.pdf.ITextRenderer;
 import pt.solutions.af.invoice.model.Invoice;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.UUID;
 
 @Component
 @AllArgsConstructor
+@NoArgsConstructor
 public class PdfGeneratorUtil {
 
-    private final SpringTemplateEngine templateEngine;
-    private final String baseUrl;
+    private SpringTemplateEngine templateEngine;
+
+    @Value("${base.url}")
+    private String baseUrl;
 
     public File generatePdfFromInvoice(Invoice invoice) {
         Context ctx = new Context();

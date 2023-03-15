@@ -1,7 +1,9 @@
 package pt.solutions.af.email.application;
 
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
@@ -19,12 +21,15 @@ import java.nio.charset.StandardCharsets;
 
 @Service
 @AllArgsConstructor
+@NoArgsConstructor
 @Slf4j
 public class EmailApplicationService {
 
     private JavaMailSender javaMailSender;
     private SpringTemplateEngine templateEngine;
     private PdfGeneratorUtil pdfGeneratorUtil;
+
+    @Value("${base.url}")
     private String baseUrl;
 
     @Async

@@ -11,6 +11,8 @@ import pt.solutions.af.user.repository.ProviderRepository;
 import pt.solutions.af.user.repository.UserRepository;
 import pt.solutions.af.workingplan.model.WorkingPlan;
 
+import java.util.List;
+
 @Service
 @AllArgsConstructor
 @Slf4j
@@ -26,12 +28,17 @@ public class UserApplicationService {
 
     public void saveNewProvider() {
         WorkingPlan workingPlan = WorkingPlan.generateDefaultWorkingPlan();
-        Provider provider = (Provider) Provider.builder().id("").build();
+        Provider provider = (Provider) Provider.builder().build();
+        provider.setWorkingPlan(workingPlan);
         providerRepository.save(provider);
     }
 
     //TODO: Add the exception
     public User findById(String id) {
-        return  userRepository.findById(id).orElseThrow();
+        return userRepository.findById(id).orElseThrow();
+    }
+
+    public List<Customer> getAllCustomers() {
+        return customerRepository.findAll();
     }
 }

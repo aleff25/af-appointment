@@ -2,6 +2,7 @@ package pt.solutions.af.notification.application;
 
 
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -18,15 +19,16 @@ import java.util.List;
 
 @Service
 @AllArgsConstructor
+@NoArgsConstructor
 @Slf4j
 public class NotificationApplicationService {
 
-    private final NotificationRepository repository;
-    private final EmailApplicationService emailService;
-    private final UserApplicationService userService;
+    private NotificationRepository repository;
+    private EmailApplicationService emailService;
+    private UserApplicationService userService;
 
     @Value("${mailing.enabled}")
-    private final boolean mailingEnabled;
+    private boolean mailingEnabled;
 
 
     public void newNotification(String title, String message, String url, User user) {

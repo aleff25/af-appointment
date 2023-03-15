@@ -1,5 +1,6 @@
 package pt.solutions.af.user.model.provider;
 
+import lombok.Builder;
 import lombok.Data;
 import pt.solutions.af.appointment.model.Appointment;
 import pt.solutions.af.user.model.User;
@@ -12,16 +13,18 @@ import java.util.List;
 @Data
 @Entity
 @Table(name = "providers")
-@PrimaryKeyJoinColumn(name = "id_provider")
+@PrimaryKeyJoinColumn(name = "provider_id")
 public class Provider extends User {
 
     @OneToMany(mappedBy = "provider", fetch = FetchType.LAZY)
     private List<Appointment> appointments;
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "works_providers", joinColumns = @JoinColumn(name = "id_user"), inverseJoinColumns = @JoinColumn(name = "id_work"))
+    @JoinTable(name = "works_providers", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns =
+    @JoinColumn(name = "work_id"))
     private List<Work> works;
 
-    @OneToOne(mappedBy = "providerId", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "provider", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private WorkingPlan workingPlan;
+
 }

@@ -8,6 +8,7 @@ import pt.solutions.af.appointment.model.Appointment;
 import pt.solutions.af.commons.entity.BaseEntity;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
@@ -25,7 +26,7 @@ public class Invoice extends BaseEntity {
     private double totalAmount;
     private LocalDateTime issued;
 
-    @OneToMany(mappedBy = "invoice")
+    @OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY)
     private List<Appointment> appointments;
 
     @Builder

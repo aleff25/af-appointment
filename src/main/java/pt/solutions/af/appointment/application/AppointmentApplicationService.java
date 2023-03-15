@@ -77,6 +77,10 @@ public class AppointmentApplicationService {
 
     }
 
+    public void update(Appointment appointment) {
+        repository.save(appointment);
+    }
+
     public List<TimePeriod> getAvailableHours(AppointmentAvailableHoursDTO dto) {
 
         LocalDate date = dto.getStartDate().toLocalDate();
@@ -146,4 +150,9 @@ public class AppointmentApplicationService {
         Collections.sort(periods);
         return periods;
     }
+
+    public List<Appointment> getConfirmedAppointmentsByCustomerId(String customerId) {
+        return repository.findConfirmedByCustomerId(customerId);
+    }
+
 }

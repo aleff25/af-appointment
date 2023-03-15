@@ -9,6 +9,7 @@ import pt.solutions.af.commons.entity.BaseEntity;
 import pt.solutions.af.notification.model.Notification;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
@@ -23,11 +24,6 @@ import java.util.List;
 @NoArgsConstructor
 @Inheritance(strategy = InheritanceType.JOINED)
 public class User extends BaseEntity {
-
-    @Id
-    @GeneratedValue(generator = "system-uuid")
-    @GenericGenerator(name = "system-uuid", strategy = "uuid")
-    private String id;
     private String firstName;
     private String lastName;
     private String email;
@@ -37,13 +33,12 @@ public class User extends BaseEntity {
     private String city;
     private String postCode;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Notification> notifications;
 
     @Builder
-    public User(String id, String firstName, String lastName, String email, String phoneNumber, boolean provider,
+    public User(String firstName, String lastName, String email, String phoneNumber, boolean provider,
                 String street, String city, String postCode) {
-        this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
