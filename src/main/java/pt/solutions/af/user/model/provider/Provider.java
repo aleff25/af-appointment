@@ -16,15 +16,15 @@ import java.util.List;
 @PrimaryKeyJoinColumn(name = "provider_id")
 public class Provider extends User {
 
-    @OneToMany(mappedBy = "provider", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "provider")
     private List<Appointment> appointments;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany
     @JoinTable(name = "works_providers", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns =
     @JoinColumn(name = "work_id"))
     private List<Work> works;
 
-    @OneToOne(mappedBy = "provider", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL)
     private WorkingPlan workingPlan;
 
 }

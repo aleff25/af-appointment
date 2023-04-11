@@ -34,13 +34,13 @@ public class WorkApplicationService {
     }
 
     public void update(Work workUpdateData) {
-        Work work = getById(workUpdateData.getId());
-        work.setName(workUpdateData.getName());
-        work.setPrice(workUpdateData.getPrice());
-        work.setDuration(workUpdateData.getDuration());
-        work.setDescription(workUpdateData.getDescription());
-        work.setTargetCustomer(workUpdateData.getTargetCustomer());
-        repository.save(work);
+//        Work work = getById(workUpdateData.getId());
+//        work.setName(workUpdateData.getName());
+//        work.setPrice(workUpdateData.getPrice());
+//        work.setDuration(workUpdateData.getDuration());
+//        work.setDescription(workUpdateData.getDescription());
+//        work.setTargetCustomer(workUpdateData.getTargetCustomer());
+//        repository.save(work);
     }
 
     public void deleteById(String workId) {
@@ -54,9 +54,7 @@ public class WorkApplicationService {
 //            return false;
 //        } else return !customer.hasRole("ROLE_CUSTOMER_CORPORATE") || work.getTargetCustomer().equals("corporate");
 
-        if (!work.getTargetCustomer().equals("retail")) {
-            return false;
-        } else return work.getTargetCustomer().equals("corporate");
+        return true;
     }
 
     public List<Work> getWorksByProviderId(String providerId) {

@@ -59,7 +59,7 @@ public class InvoiceApplicationService {
 
     public File generatePdfForInvoice(String invoiceId) {
 //        CustomUserDetails currentUser = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Invoice invoice = repository.getReferenceById(invoiceId);
+        Invoice invoice = repository.findInvoiceById(invoiceId);
 //        if (!isUserAllowedToDownloadInvoice(currentUser, invoice)) {
 //            throw new org.springframework.security.access.AccessDeniedException("Unauthorized");
 //        }
@@ -67,15 +67,15 @@ public class InvoiceApplicationService {
     }
 
     public boolean isUserAllowedToDownloadInvoice(User user, Invoice invoice) {
-        String userId = user.getId();
+        //String userId = user.getId();
 //        if (user.hasRole("ROLE_ADMIN")) {
 //            return true;
 //        }
-        for (Appointment a : invoice.getAppointments()) {
-            if (a.getProvider().getId().equals(userId) || a.getCustomer().getId().equals(userId)) {
-                return true;
-            }
-        }
+//        for (Appointment a : invoice.getAppointments()) {
+//            if (a.getProvider().getId().equals(userId) || a.getCustomer().getId().equals(userId)) {
+//                return true;
+//            }
+//        }
         return false;
     }
 
@@ -102,6 +102,7 @@ public class InvoiceApplicationService {
                         .issued(LocalDateTime.now())
                         .appointments(appointmentsToIssueInvoice)
                         .build();
+                invoice.totalAmountFromAppointments();
                 repository.save(invoice);
                 notificationService.newInvoice(invoice, true);
             }

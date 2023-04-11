@@ -5,6 +5,6 @@ import pt.solutions.af.workingplan.model.WorkingPlan;
 
 public interface WorkingPlanRepository extends JpaRepository<WorkingPlan, String> {
 
-    WorkingPlan findByProviderId(String providerId);
+//    WorkingPlan findByProviderId(String providerId);
 
 }

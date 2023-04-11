@@ -37,4 +37,11 @@ public class Invoice extends BaseEntity {
         this.issued = issued;
         this.appointments = appointments;
     }
+
+    public void totalAmountFromAppointments() {
+        this.appointments.forEach(appointment -> {
+            appointment.setInvoice(this);
+            totalAmount += appointment.getWork().getPrice();
+        });
+    }
 }

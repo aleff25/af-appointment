@@ -30,19 +30,19 @@ public class Appointment extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private AppointmentStatusEnum status;
 
-    @Type(type = "json")
-    @Column(columnDefinition = "json", name = "status_changes")
-    private List<AppointmentStatus> statusChanges = new ArrayList<>();
+//    @Type(type = "json")
+//    @Column(columnDefinition = "json", name = "status_changes")
+//    private List<AppointmentStatus> statusChanges = new ArrayList<>();
 
     @JoinColumn(name = "providerId", insertable = false, updatable = false)
     @OneToOne(targetEntity = User.class, fetch = FetchType.LAZY)
-    private Provider provider;
+    private User provider;
 
     private String custumerId;
 
-    @JoinColumn(name = "custumerId", insertable = false, updatable = false)
+    @JoinColumn(name = "custumerId", insertable = false, updatable = false, nullable = true)
     @OneToOne(targetEntity = User.class, fetch = FetchType.LAZY)
-    private Customer customer;
+    private User customer;
 
     private String workId;
 
@@ -56,22 +56,31 @@ public class Appointment extends BaseEntity {
     @JoinColumn(name = "invoiceId", insertable = false, updatable = false)
     private Invoice invoice;
 
-
     @Builder
-    public Appointment(LocalDateTime startDate, LocalDateTime endDate, String providerId, String custumerId) {
+    public Appointment(LocalDateTime startDate, LocalDateTime endDate, String providerId, AppointmentStatusEnum status, Provider provider, String custumerId, Customer customer,
+                       String workId, Work work, String invoiceId, Invoice invoice) {
         this.startDate = startDate;
         this.endDate = endDate;
         this.providerId = providerId;
+        this.status = status;
+//        this.statusChanges = statusChanges;
+        this.provider = provider;
         this.custumerId = custumerId;
+        this.customer = customer;
+        this.workId = workId;
+        this.work = work;
+        this.invoiceId = invoiceId;
+        this.invoice = invoice;
     }
 
     public void newAppointment() {
         this.status = AppointmentStatusEnum.SCHEDULED;
-        this.statusChanges.add(AppointmentStatus.ofScheduled());
+//        this.statusChanges = new ArrayList<>();
+//        this.statusChanges.add(AppointmentStatus.ofScheduled());
     }
 
     public void invoiceAppointment() {
         this.status = AppointmentStatusEnum.INVOICED;
-        this.statusChanges.add(AppointmentStatus.ofInvoiced());
+//        this.statusChanges.add(AppointmentStatus.ofInvoiced());
     }
 }

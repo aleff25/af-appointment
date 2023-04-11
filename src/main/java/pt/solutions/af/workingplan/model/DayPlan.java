@@ -4,6 +4,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import pt.solutions.af.utils.TimePeriod;
 
 import java.util.ArrayList;
@@ -67,5 +69,21 @@ public class DayPlan {
 
     public void addBreak(TimePeriod breakToAdd) {
         breaks.add(breakToAdd);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass()) return false;
+
+        DayPlan dayPlan = (DayPlan) o;
+
+        return new EqualsBuilder().append(workingHours, dayPlan.workingHours).append(breaks, dayPlan.breaks).isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37).append(workingHours).append(breaks).toHashCode();
     }
 }

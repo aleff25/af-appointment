@@ -4,6 +4,7 @@ package pt.solutions.af.notification.application;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import pt.solutions.af.appointment.model.Appointment;
@@ -18,8 +19,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Service
-@AllArgsConstructor
-@NoArgsConstructor
 @Slf4j
 public class NotificationApplicationService {
 
@@ -27,9 +26,15 @@ public class NotificationApplicationService {
     private EmailApplicationService emailService;
     private UserApplicationService userService;
 
-    @Value("${mailing.enabled}")
+    @Value("${mailing.enabled:true}")
     private boolean mailingEnabled;
 
+    @Autowired
+    public NotificationApplicationService(NotificationRepository repository, EmailApplicationService emailService, UserApplicationService userService) {
+        this.repository = repository;
+        this.emailService = emailService;
+        this.userService = userService;
+    }
 
     public void newNotification(String title, String message, String url, User user) {
         Notification notification = new Notification();
@@ -95,7 +100,7 @@ public class NotificationApplicationService {
         }
     }
 
-    public void newNewAppointmentScheduledNotification(Appointment appointment, boolean sendEmail) {
+    public void newAppointmentScheduledNotification(Appointment appointment, boolean sendEmail) {
         String title = "New appointment scheduled";
         String message =
                 "New appointment scheduled with" + appointment.getCustomer().getFirstName() + " " + appointment.getProvider().getLastName() + " on " + appointment.getStartDate().toString();

@@ -3,6 +3,8 @@ package pt.solutions.af.user.application;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import pt.solutions.af.user.application.dto.CreateCustomerDTO;
+import pt.solutions.af.user.application.dto.CreateProviderDto;
 import pt.solutions.af.user.model.User;
 import pt.solutions.af.user.model.customer.Customer;
 import pt.solutions.af.user.model.provider.Provider;
@@ -12,6 +14,7 @@ import pt.solutions.af.user.repository.UserRepository;
 import pt.solutions.af.workingplan.model.WorkingPlan;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor
@@ -23,13 +26,40 @@ public class UserApplicationService {
     private ProviderRepository providerRepository;
 
     public Customer getCustomerById(String customerId) {
-        return customerRepository.getReferenceById(customerId);
+        return customerRepository.findById(customerId).get();
     }
 
-    public void saveNewProvider() {
+    public Provider getProviderById(String providerId) {
+        return providerRepository.findById(providerId)
+                .get();
+    }
+
+    public void saveNewRetailCustomer(CreateCustomerDTO dto) {
+        Customer retailCustomer = new Customer();
+        retailCustomer.setId(UUID.randomUUID().toString());
+        retailCustomer.setFirstName(dto.getFirstName());
+        retailCustomer.setLastName(dto.getLastName());
+        retailCustomer.setPhoneNumber(dto.getPhoneNumber());
+        retailCustomer.setCity(dto.getCity());
+        retailCustomer.setEmail(dto.getEmail());
+        retailCustomer.setPostCode(dto.getPostCode());
+
+        customerRepository.save(retailCustomer);
+    }
+
+    public void saveNewProvider(CreateProviderDto dto) {
         WorkingPlan workingPlan = WorkingPlan.generateDefaultWorkingPlan();
-        Provider provider = (Provider) Provider.builder().build();
+        Provider provider = new Provider();
+        provider.setId(UUID.randomUUID().toString());
+        provider.setFirstName(dto.getFirstName());
+        provider.setLastName(dto.getLastName());
+        provider.setPhoneNumber(dto.getPhoneNumber());
+        provider.setCity(dto.getCity());
+        provider.setEmail(dto.getEmail());
+        provider.setPostCode(dto.getPostCode());
+        provider.setProvider(true);
         provider.setWorkingPlan(workingPlan);
+
         providerRepository.save(provider);
     }
 

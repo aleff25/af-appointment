@@ -26,4 +26,10 @@ public interface AppointmentRepository extends JpaRepository<Appointment, String
 
     @Query("select a from Appointment a where a.status = 'CONFIRMED' and a.custumerId = :customerId")
     List<Appointment> findConfirmedByCustomerId(@Param("customerId") String customerId);
+
+    @Query("select a from Appointment a where a.status = 'SCHEDULED' and :now >= a.endDate")
+    List<Appointment> findScheduledWithEndBeforeDate(@Param("now") LocalDateTime now);
+
+    @Query("select a from Appointment a where a.status = 'FINISHED' and :date >= a.endDate")
+    List<Appointment> findFinishedWithEndBeforeDate(@Param("date") LocalDateTime date);
 }

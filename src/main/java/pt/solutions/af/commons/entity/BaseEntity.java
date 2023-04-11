@@ -4,6 +4,7 @@ package pt.solutions.af.commons.entity;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 
@@ -11,8 +12,8 @@ import javax.persistence.MappedSuperclass;
 public class BaseEntity {
 
     @Id
-    @GeneratedValue(generator="system-uuid")
-    @GenericGenerator(name="system-uuid", strategy = "uuid")
+    @GenericGenerator(name = "uuid2", strategy = "uuid2")
+    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "uuid2")
     private String id;
 
     public String getId() {

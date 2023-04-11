@@ -15,4 +15,7 @@ public interface InvoiceRepository extends JpaRepository<Invoice, String> {
 
     @Query("select i from Invoice i inner join i.appointments a where a.id in :appointmentId")
     Invoice findByAppointmentId(@Param("appointmentId") String appointmentId);
+
+    @Query("SELECT i FROM Invoice i JOIN FETCH i.appointments where i.id = :id")
+    Invoice findInvoiceById(String id);
 }

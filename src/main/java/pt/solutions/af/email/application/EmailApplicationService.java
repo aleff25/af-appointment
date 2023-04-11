@@ -3,6 +3,7 @@ package pt.solutions.af.email.application;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -20,8 +21,6 @@ import java.io.File;
 import java.nio.charset.StandardCharsets;
 
 @Service
-@AllArgsConstructor
-@NoArgsConstructor
 @Slf4j
 public class EmailApplicationService {
 
@@ -31,6 +30,13 @@ public class EmailApplicationService {
 
     @Value("${base.url}")
     private String baseUrl;
+
+    @Autowired
+    public EmailApplicationService(JavaMailSender javaMailSender, SpringTemplateEngine templateEngine, PdfGeneratorUtil pdfGeneratorUtil) {
+        this.javaMailSender = javaMailSender;
+        this.templateEngine = templateEngine;
+        this.pdfGeneratorUtil = pdfGeneratorUtil;
+    }
 
     @Async
     public void sendEmail(String to, String subject, String templateName, Context templateContext, File attachment) {

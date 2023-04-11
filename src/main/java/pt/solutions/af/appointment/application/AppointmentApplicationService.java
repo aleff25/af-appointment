@@ -7,8 +7,14 @@ import pt.solutions.af.appointment.application.dto.AppointmentAvailableHoursDTO;
 import pt.solutions.af.appointment.application.dto.RegisterAppointmentDTO;
 import pt.solutions.af.appointment.exception.AppointmentNotAvailableException;
 import pt.solutions.af.appointment.model.Appointment;
+import pt.solutions.af.appointment.model.AppointmentStatus;
+import pt.solutions.af.appointment.model.AppointmentStatusEnum;
 import pt.solutions.af.appointment.repository.AppointmentRepository;
+import pt.solutions.af.notification.application.NotificationApplicationService;
+import pt.solutions.af.sms.application.SmsService;
+import pt.solutions.af.sms.model.SmsRequest;
 import pt.solutions.af.user.application.UserApplicationService;
+import pt.solutions.af.user.model.customer.Customer;
 import pt.solutions.af.user.model.provider.Provider;
 import pt.solutions.af.utils.TimePeriod;
 import pt.solutions.af.work.application.WorkApplicationService;
@@ -35,6 +41,10 @@ public class AppointmentApplicationService {
     private UserApplicationService userService;
 
     private WorkApplicationService workService;
+
+    private NotificationApplicationService notificationService;
+
+    private SmsService smsService;
 
 
     public List<Appointment> getAppointmentByProviderId(String providerId) {
@@ -63,19 +73,53 @@ public class AppointmentApplicationService {
         if (!isAvailable(appointmentAvailableHoursDTO)) {
             throw new AppointmentNotAvailableException();
         }
+
+        Work work = workService.getById(dto.getWorkId());
+        Customer customer = userService.getCustomerById(dto.getCustomerId());
+        Provider provider = userService.getProviderById(dto.getProviderId());
         Appointment appointment = Appointment.builder()
                 .custumerId(dto.getCustomerId())
+                .customer(customer)
                 .providerId(dto.getProviderId())
+                .provider(provider)
+                .workId(dto.getWorkId())
+                .work(work)
                 .startDate(startDate)
+                .endDate(startDate.plusMinutes(work.getDuration()))
                 .build();
 
         appointment.newAppointment();
 
+        notificationService.newAppointmentScheduledNotification(appointment, true);
+// FIXME: Paid Service
+//        String message = String.format("Hello, you have an appointment scheduled for Service:%s - Price:%s - " +
+//                        "Time:%s. ",
+//                work.getName(), work.getPrice(), appointment.getStartDate().toString());
+//        SmsRequest smsRequest = new SmsRequest(customer.getPhoneNumber(), message);
+//        smsService.sendSms(smsRequest);
+
         log.info("Registering a new appointment Appointment=[{}]", appointment.toString());
 
         repository.save(appointment);
-
     }
+
+    public void updateAllAppointmentsStatuses() {
+        repository.findScheduledWithEndBeforeDate(LocalDateTime.now())
+                .forEach(appointment -> {
+                    appointment.setStatus(AppointmentStatusEnum.FINISHED);
+                    update(appointment);
+                    if (LocalDateTime.now().minusDays(1).isBefore(appointment.getEndDate())) {
+                        notificationService.newAppointmentFinishedNotification(appointment, true);
+                    }
+                });
+
+        repository.findFinishedWithEndBeforeDate(LocalDateTime.now().minusDays(1))
+                .forEach(appointment -> {
+                    appointment.setStatus(AppointmentStatusEnum.CONFIRMED);
+                    update(appointment);
+                });
+    }
+
 
     public void update(Appointment appointment) {
         repository.save(appointment);

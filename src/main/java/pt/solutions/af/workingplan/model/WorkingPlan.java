@@ -1,20 +1,20 @@
 package pt.solutions.af.workingplan.model;
 
-import com.vladmihalcea.hibernate.type.json.JsonStringType;
+import io.hypersistence.utils.hibernate.type.json.JsonStringType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
-import pt.solutions.af.commons.entity.BaseEntity;
 import pt.solutions.af.user.model.provider.Provider;
 import pt.solutions.af.utils.TimePeriod;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.time.LocalTime;
@@ -25,40 +25,44 @@ import java.time.LocalTime;
 @Entity
 @Table(name = "working_plans")
 @NoArgsConstructor
-public class WorkingPlan extends BaseEntity {
+public class WorkingPlan {
 
 
-    private String providerId;
+    @Id
+    @GenericGenerator(name = "uuid2", strategy = "uuid2")
+    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "uuid2")
+    @Column(name = "provider_id")
+    private String id;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "providerId", insertable = false, updatable = false)
+    @OneToOne
+    @JoinColumn(name = "provider_id")
     private Provider provider;
 
-    @Type(type = "json")
+    @Type(type = "io.hypersistence.utils.hibernate.type.json.JsonType")
     @Column(columnDefinition = "json", name = "monday")
     private DayPlan monday;
 
-    @Type(type = "json")
+    @Type(type = "io.hypersistence.utils.hibernate.type.json.JsonType")
     @Column(columnDefinition = "json", name = "tuesday")
     private DayPlan tuesday;
 
-    @Type(type = "json")
+    @Type(type = "io.hypersistence.utils.hibernate.type.json.JsonType")
     @Column(columnDefinition = "json", name = "wednesday")
     private DayPlan wednesday;
 
-    @Type(type = "json")
+    @Type(type = "io.hypersistence.utils.hibernate.type.json.JsonType")
     @Column(columnDefinition = "json", name = "thursday")
     private DayPlan thursday;
 
-    @Type(type = "json")
+    @Type(type = "io.hypersistence.utils.hibernate.type.json.JsonType")
     @Column(columnDefinition = "json", name = "friday")
     private DayPlan friday;
 
-    @Type(type = "json")
+    @Type(type = "io.hypersistence.utils.hibernate.type.json.JsonType")
     @Column(columnDefinition = "json", name = "saturday")
     private DayPlan saturday;
 
-    @Type(type = "json")
+    @Type(type = "io.hypersistence.utils.hibernate.type.json.JsonType")
     @Column(columnDefinition = "json", name = "sunday")
     private DayPlan sunday;
 
