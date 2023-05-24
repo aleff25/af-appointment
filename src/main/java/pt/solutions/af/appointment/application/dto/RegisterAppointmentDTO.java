@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.time.Instant;
 
 @Getter
 @AllArgsConstructor(staticName = "of")
@@ -22,11 +21,22 @@ public class RegisterAppointmentDTO {
     @NotBlank(message = "{RegisterAppointmentDTO.providerId.NotBlank}")
     private String providerId;
 
-    @NotBlank(message = "{RegisterAppointmentDTO.customerId.NotBlank}")
+    @NotBlank(message = "{RegisterAppointmentDTO.firstName.NotBlank}")
+    private String firstName;
+
+    @NotBlank(message = "{RegisterAppointmentDTO.lastName.NotBlank}")
+    private String lastName;
+
+    @NotNull(message = "{RegisterAppointmentDTO.date.NotNull}")
+    private String date;
+
+    @NotNull(message = "{RegisterAppointmentDTO.timeStart.NotNull}")
+    private String timeStart;
+
+    @NotNull(message = "{RegisterAppointmentDTO.timeEnd.NotNull}")
+    private String timeEnd;
+
     private String customerId;
-
-    @NotNull(message = "{RegisterAppointmentDTO.startDate.NotNull}")
-    private Instant startDate;
-
+    private String nif;
 }
 

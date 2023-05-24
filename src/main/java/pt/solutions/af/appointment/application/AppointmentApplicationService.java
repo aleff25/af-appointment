@@ -2,17 +2,17 @@ package pt.solutions.af.appointment.application;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pt.solutions.af.appointment.application.dto.AppointmentAvailableHoursDTO;
 import pt.solutions.af.appointment.application.dto.RegisterAppointmentDTO;
 import pt.solutions.af.appointment.exception.AppointmentNotAvailableException;
 import pt.solutions.af.appointment.model.Appointment;
-import pt.solutions.af.appointment.model.AppointmentStatus;
 import pt.solutions.af.appointment.model.AppointmentStatusEnum;
 import pt.solutions.af.appointment.repository.AppointmentRepository;
 import pt.solutions.af.notification.application.NotificationApplicationService;
 import pt.solutions.af.sms.application.SmsService;
-import pt.solutions.af.sms.model.SmsRequest;
 import pt.solutions.af.user.application.UserApplicationService;
 import pt.solutions.af.user.model.customer.Customer;
 import pt.solutions.af.user.model.provider.Provider;
@@ -25,11 +25,12 @@ import pt.solutions.af.workingplan.model.WorkingPlan;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static pt.solutions.af.utils.DateUtils.changeDateStrToLocalDateTime;
 
 @Service
 @AllArgsConstructor
@@ -63,26 +64,34 @@ public class AppointmentApplicationService {
         return repository.findByCustomerIdWithStartInPeriod(customerId, day.atStartOfDay(), day.atStartOfDay().plusDays(1));
     }
 
+
+    @Transactional
     public void create(RegisterAppointmentDTO dto) {
 
-        LocalDateTime startDate = LocalDateTime.ofInstant(dto.getStartDate(), ZoneId.systemDefault());
+        LocalDateTime startDate = changeDateStrToLocalDateTime(dto.getDate(), dto.getTimeStart());
+        LocalDateTime endDate = changeDateStrToLocalDateTime(dto.getDate(), dto.getTimeEnd());
 
         AppointmentAvailableHoursDTO appointmentAvailableHoursDTO = AppointmentAvailableHoursDTO.of(dto.getCustomerId(),
-                dto.getProviderId(), dto.getWorkId(), startDate);
+                dto.getProviderId(), dto.getWorkId(), startDate, endDate);
 
         if (!isAvailable(appointmentAvailableHoursDTO)) {
             throw new AppointmentNotAvailableException();
         }
 
         Work work = workService.getById(dto.getWorkId());
-        Customer customer = userService.getCustomerById(dto.getCustomerId());
+        Customer customer;
+        if (StringUtils.isNotBlank(dto.getCustomerId())) {
+            customer = userService.getCustomerById(dto.getCustomerId());
+        } else {
+            customer = new Customer();
+            customer.setFirstName(dto.getFirstName());
+            customer.setLastName(dto.getLastName());
+        }
+
         Provider provider = userService.getProviderById(dto.getProviderId());
         Appointment appointment = Appointment.builder()
-                .custumerId(dto.getCustomerId())
                 .customer(customer)
-                .providerId(dto.getProviderId())
                 .provider(provider)
-                .workId(dto.getWorkId())
                 .work(work)
                 .startDate(startDate)
                 .endDate(startDate.plusMinutes(work.getDuration()))
@@ -90,17 +99,16 @@ public class AppointmentApplicationService {
 
         appointment.newAppointment();
 
+        log.info("Registering a new appointment Appointment=[{}]", appointment.toString());
+        repository.save(appointment);
         notificationService.newAppointmentScheduledNotification(appointment, true);
-// FIXME: Paid Service
+
+        // FIXME: Paid Service
 //        String message = String.format("Hello, you have an appointment scheduled for Service:%s - Price:%s - " +
 //                        "Time:%s. ",
 //                work.getName(), work.getPrice(), appointment.getStartDate().toString());
 //        SmsRequest smsRequest = new SmsRequest(customer.getPhoneNumber(), message);
 //        smsService.sendSms(smsRequest);
-
-        log.info("Registering a new appointment Appointment=[{}]", appointment.toString());
-
-        repository.save(appointment);
     }
 
     public void updateAllAppointmentsStatuses() {
@@ -135,7 +143,10 @@ public class AppointmentApplicationService {
 
 
         List<Appointment> providerAppointments = getAppointmentsByProviderAtDay(dto.getProviderId(), date);
-        List<Appointment> customerAppointments = getAppointmentsByCustomersAtDay(dto.getCustomerId(), date);
+        List<Appointment> customerAppointments = new ArrayList<>();
+        if (StringUtils.isNotBlank(dto.getCustomerId())) {
+            customerAppointments = getAppointmentsByCustomersAtDay(dto.getCustomerId(), date);
+        }
 
         List<TimePeriod> availablePeriods = dayPlan.getTimePeriodsWithBreaksExcluded();
         availablePeriods = excludeAppointmentsFromTimePeriods(availablePeriods, providerAppointments);
@@ -148,9 +159,10 @@ public class AppointmentApplicationService {
         if (!workService.isWorkForCustomer(dto.getWorkId(), dto.getCustomerId())) {
             return false;
         }
-        Work work = workService.getById(dto.getWorkId());
+//        Work work = workService.getById(dto.getWorkId());
         LocalTime start = dto.getStartDate().toLocalTime();
-        TimePeriod timePeriod = new TimePeriod(start, start.plusMinutes(work.getDuration()));
+        LocalTime end = dto.getEndDate().toLocalTime();
+        TimePeriod timePeriod = new TimePeriod(start, end);
         return getAvailableHours(dto).contains(timePeriod);
     }
 
@@ -199,4 +211,7 @@ public class AppointmentApplicationService {
         return repository.findConfirmedByCustomerId(customerId);
     }
 
+    public List<Appointment> list() {
+        return repository.findAll();
+    }
 }

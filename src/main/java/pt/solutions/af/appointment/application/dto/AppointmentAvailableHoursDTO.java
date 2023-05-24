@@ -16,7 +16,6 @@ import java.time.LocalDateTime;
 @ApiModel(description = "Appointment with available hours")
 public class AppointmentAvailableHoursDTO {
 
-    @NotBlank(message = "{RegisterAppointmentDTO.customerId.NotBlank}")
     private String customerId;
 
     @NotBlank(message = "{RegisterAppointmentDTO.providerId.NotBlank}")
@@ -27,5 +26,8 @@ public class AppointmentAvailableHoursDTO {
 
     @NotNull(message = "{RegisterAppointmentDTO.startDate.NotNull}")
     private LocalDateTime startDate;
+
+    @NotNull(message = "{RegisterAppointmentDTO.endDate.NotNull}")
+    private LocalDateTime endDate;
 
 }
