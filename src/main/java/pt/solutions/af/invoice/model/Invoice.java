@@ -1,14 +1,14 @@
 package pt.solutions.af.invoice.model;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import pt.solutions.af.appointment.model.Appointment;
 import pt.solutions.af.commons.entity.BaseEntity;
 
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.List;
 

@@ -1,12 +1,12 @@
 package pt.solutions.af.user.model.customer;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrimaryKeyJoinColumn;
+import jakarta.persistence.Table;
 import pt.solutions.af.appointment.model.Appointment;
 import pt.solutions.af.user.model.User;
 
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
-import javax.persistence.PrimaryKeyJoinColumn;
-import javax.persistence.Table;
 import java.util.List;
 
 

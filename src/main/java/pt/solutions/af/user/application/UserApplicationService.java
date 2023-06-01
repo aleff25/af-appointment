@@ -2,6 +2,9 @@ package pt.solutions.af.user.application;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import pt.solutions.af.user.application.dto.CreateCustomerDTO;
 import pt.solutions.af.user.application.dto.CreateProviderDto;
@@ -19,7 +22,7 @@ import java.util.UUID;
 @Service
 @AllArgsConstructor
 @Slf4j
-public class UserApplicationService {
+public class UserApplicationService implements UserDetailsService {
 
     private UserRepository userRepository;
     private CustomerRepository customerRepository;
@@ -70,5 +73,10 @@ public class UserApplicationService {
 
     public List<Customer> getAllCustomers() {
         return customerRepository.findAll();
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
+        return userRepository.findByEmail(login);
     }
 }

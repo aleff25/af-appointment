@@ -1,6 +1,7 @@
 package pt.solutions.af.serviceType.controller;
 
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -10,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 import pt.solutions.af.serviceType.application.ServiceTypeApplicationService;
 import pt.solutions.af.serviceType.application.dto.RegisterServiceTypeDTO;
 
-import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/services-type")

@@ -1,4 +1,4 @@
-package pt.solutions.af.configurations;
+package pt.solutions.af.infra.mail;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;

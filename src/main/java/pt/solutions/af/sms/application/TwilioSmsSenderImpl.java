@@ -6,7 +6,7 @@ import com.twilio.type.PhoneNumber;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import pt.solutions.af.configurations.TwilioConfiguration;
+import pt.solutions.af.infra.mail.TwilioConfiguration;
 import pt.solutions.af.sms.model.SmsRequest;
 
 @Service("twilio")

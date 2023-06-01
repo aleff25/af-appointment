@@ -1,5 +1,6 @@
 package pt.solutions.af.appointment.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,7 +13,6 @@ import pt.solutions.af.appointment.application.AppointmentApplicationService;
 import pt.solutions.af.appointment.application.dto.RegisterAppointmentDTO;
 import pt.solutions.af.appointment.model.Appointment;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @RestController

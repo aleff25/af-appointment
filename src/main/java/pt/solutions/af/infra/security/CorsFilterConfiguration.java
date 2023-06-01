@@ -1,4 +1,4 @@
-package pt.solutions.af.configurations;
+package pt.solutions.af.infra.security;
 
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;

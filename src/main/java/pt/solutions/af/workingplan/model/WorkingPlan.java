@@ -1,26 +1,24 @@
 package pt.solutions.af.workingplan.model;
 
-import io.hypersistence.utils.hibernate.type.json.JsonStringType;
+import io.hypersistence.utils.hibernate.type.json.JsonType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
 import pt.solutions.af.user.model.provider.Provider;
 import pt.solutions.af.utils.TimePeriod;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
 import java.time.LocalTime;
 
 
-@TypeDef(name = "json", typeClass = JsonStringType.class)
 @Data
 @Entity
 @Table(name = "working_plans")
@@ -38,31 +36,31 @@ public class WorkingPlan {
     @JoinColumn(name = "provider_id")
     private Provider provider;
 
-    @Type(type = "io.hypersistence.utils.hibernate.type.json.JsonType")
+    @Type(JsonType.class)
     @Column(columnDefinition = "json", name = "monday")
     private DayPlan monday;
 
-    @Type(type = "io.hypersistence.utils.hibernate.type.json.JsonType")
-    @Column(columnDefinition = "json", name = "tuesday")
+    @Type(JsonType.class)
+    @Column(name = "tuesday")
     private DayPlan tuesday;
 
-    @Type(type = "io.hypersistence.utils.hibernate.type.json.JsonType")
+    @Type(JsonType.class)
     @Column(columnDefinition = "json", name = "wednesday")
     private DayPlan wednesday;
 
-    @Type(type = "io.hypersistence.utils.hibernate.type.json.JsonType")
+    @Type(JsonType.class)
     @Column(columnDefinition = "json", name = "thursday")
     private DayPlan thursday;
 
-    @Type(type = "io.hypersistence.utils.hibernate.type.json.JsonType")
+    @Type(JsonType.class)
     @Column(columnDefinition = "json", name = "friday")
     private DayPlan friday;
 
-    @Type(type = "io.hypersistence.utils.hibernate.type.json.JsonType")
+    @Type(JsonType.class)
     @Column(columnDefinition = "json", name = "saturday")
     private DayPlan saturday;
 
-    @Type(type = "io.hypersistence.utils.hibernate.type.json.JsonType")
+    @Type(JsonType.class)
     @Column(columnDefinition = "json", name = "sunday")
     private DayPlan sunday;
 

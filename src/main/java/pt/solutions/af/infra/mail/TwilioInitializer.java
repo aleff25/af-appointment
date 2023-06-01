@@ -1,4 +1,4 @@
-package pt.solutions.af.configurations;
+package pt.solutions.af.infra.mail;
 
 import com.twilio.Twilio;
 import lombok.extern.slf4j.Slf4j;
