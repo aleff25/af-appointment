@@ -6,7 +6,7 @@ import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import pt.solutions.af.user.model.AuthUserView;
+import pt.solutions.af.user.model.auth.AuthUserView;
 
 import java.time.Instant;
 import java.time.LocalDateTime;

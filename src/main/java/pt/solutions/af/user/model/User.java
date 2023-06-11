@@ -1,12 +1,7 @@
 package pt.solutions.af.user.model;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -15,6 +10,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import pt.solutions.af.commons.entity.BaseEntity;
 import pt.solutions.af.notification.model.Notification;
+import pt.solutions.af.user.model.auth.AuthUserView;
+import pt.solutions.af.user.model.auth.Role;
+import pt.solutions.af.user.model.auth.UserRole;
 
 import java.util.List;
 
@@ -40,14 +38,21 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Notification> notifications;
 
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private List<Role> roles;
+
+    @OneToMany(mappedBy = "user")
+    private List<UserRole> userRoles;
+
     public User(AuthUserView user) {
         this.firstName = user.getFirstName();
         this.lastName = user.getLastName();
         this.email = user.getEmail();
-        this.phoneNumber = user.getPhoneNumber();
-        this.street = user.getStreet();
-        this.city = user.getCity();
-        this.postCode = user.getPostCode();
         this.password = user.getPassword();
     }
 

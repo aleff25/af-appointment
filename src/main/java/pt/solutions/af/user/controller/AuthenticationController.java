@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import pt.solutions.af.infra.security.TokenJWTForm;
 import pt.solutions.af.infra.security.TokenService;
 import pt.solutions.af.user.application.dto.AuthenticationForm;
-import pt.solutions.af.user.model.AuthUserView;
+import pt.solutions.af.user.model.auth.AuthUserView;
 
 
 @RestController
