@@ -40,7 +40,7 @@ public class SecurityFilter extends OncePerRequestFilter {
     public String getToken(HttpServletRequest request) {
         var authorizationHeader = request.getHeader("Authorization");
 
-        if (authorizationHeader != null) {
+        if (authorizationHeader != null && !authorizationHeader.contains("Basic")) {
 
             return authorizationHeader.replace("Bearer ", "");
         }
