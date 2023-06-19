@@ -12,13 +12,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import pt.solutions.af.commons.entity.CollectionResponse;
 import pt.solutions.af.invoice.application.InvoiceApplicationService;
-import pt.solutions.af.invoice.model.Invoice;
+import pt.solutions.af.invoice.model.InvoiceListView;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.util.List;
 
 @RestController
 @RequestMapping("/invoices")
@@ -30,9 +30,10 @@ public class InvoiceController {
     private InvoiceApplicationService invoiceService;
 
     @GetMapping("/all")
-    public ResponseEntity<List<Invoice>> showAllInvoices() {
-        List<Invoice> invoices = invoiceService.getAllInvoices();
-        return ResponseEntity.ok(invoices);
+    public ResponseEntity<CollectionResponse<InvoiceListView>> showAllInvoices() {
+        var invoices = invoiceService.getAllInvoices();
+        var reponse = new CollectionResponse<>(false, invoices);
+        return ResponseEntity.ok(reponse);
     }
 
     @GetMapping("/generate")

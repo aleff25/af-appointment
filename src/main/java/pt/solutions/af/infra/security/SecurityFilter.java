@@ -26,7 +26,7 @@ public class SecurityFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         var tokenJWT = getToken(request);
 
-        if (tokenJWT != null) {
+        if (tokenJWT != null && !request.getRequestURI().contains("login")) {
             var subject = tokenService.getSubject(tokenJWT);
             System.out.println("FILTER");
             var user = userRepository.findByEmail(subject);

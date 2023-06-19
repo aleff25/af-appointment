@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import pt.solutions.af.appointment.application.AppointmentApplicationService;
 import pt.solutions.af.appointment.model.Appointment;
 import pt.solutions.af.invoice.model.Invoice;
+import pt.solutions.af.invoice.model.InvoiceListView;
 import pt.solutions.af.invoice.repository.InvoiceRepository;
 import pt.solutions.af.notification.application.NotificationApplicationService;
 import pt.solutions.af.user.application.UserApplicationService;
@@ -52,9 +53,9 @@ public class InvoiceApplicationService {
                 .orElseThrow(RuntimeException::new);
     }
 
-//    @PreAuthorize("hasRole('ADMIN')")
-    public List<Invoice> getAllInvoices() {
-        return repository.findAll();
+    //    @PreAuthorize("hasRole('ADMIN')")
+    public List<InvoiceListView> getAllInvoices() {
+        return repository.getAllInvoiceListView();
     }
 
     public File generatePdfForInvoice(String invoiceId) {

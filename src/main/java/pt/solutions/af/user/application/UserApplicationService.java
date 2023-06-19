@@ -11,6 +11,7 @@ import pt.solutions.af.user.application.dto.CreateProviderDto;
 import pt.solutions.af.user.model.User;
 import pt.solutions.af.user.model.customer.Customer;
 import pt.solutions.af.user.model.provider.Provider;
+import pt.solutions.af.user.model.provider.ProviderListView;
 import pt.solutions.af.user.repository.CustomerRepository;
 import pt.solutions.af.user.repository.ProviderRepository;
 import pt.solutions.af.user.repository.UserRepository;
@@ -73,6 +74,10 @@ public class UserApplicationService implements UserDetailsService {
 
     public List<Customer> getAllCustomers() {
         return customerRepository.findAll();
+    }
+
+    public List<ProviderListView> getAllProviders() {
+        return providerRepository.findAllProviders();
     }
 
     @Override
