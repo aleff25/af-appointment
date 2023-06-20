@@ -9,6 +9,7 @@ import pt.solutions.af.appointment.application.dto.AppointmentAvailableHoursDTO;
 import pt.solutions.af.appointment.application.dto.RegisterAppointmentDTO;
 import pt.solutions.af.appointment.exception.AppointmentNotAvailableException;
 import pt.solutions.af.appointment.model.Appointment;
+import pt.solutions.af.appointment.model.AppointmentListView;
 import pt.solutions.af.appointment.model.AppointmentStatusEnum;
 import pt.solutions.af.appointment.repository.AppointmentRepository;
 import pt.solutions.af.notification.application.NotificationApplicationService;
@@ -211,7 +212,7 @@ public class AppointmentApplicationService {
         return repository.findConfirmedByCustomerId(customerId);
     }
 
-    public List<Appointment> list() {
-        return repository.findAll();
+    public List<AppointmentListView> list(LocalDateTime startDate, LocalDateTime endDate) {
+        return repository.getAllBetweenDates(startDate, endDate);
     }
 }

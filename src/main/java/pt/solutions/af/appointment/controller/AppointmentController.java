@@ -8,12 +8,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pt.solutions.af.appointment.application.AppointmentApplicationService;
 import pt.solutions.af.appointment.application.dto.RegisterAppointmentDTO;
-import pt.solutions.af.appointment.model.Appointment;
+import pt.solutions.af.appointment.model.AppointmentListView;
+import pt.solutions.af.commons.entity.CollectionResponse;
 
-import java.util.List;
+import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping(path = "/appointments")
@@ -24,10 +26,11 @@ public class AppointmentController {
 
 
     @GetMapping()
-    public ResponseEntity<List<Appointment>> list() {
-        List<Appointment> appointments = service.list();
-
-        return ResponseEntity.ok(appointments);
+    public ResponseEntity<CollectionResponse<AppointmentListView>> list(@RequestParam LocalDateTime startDate,
+                                                                        @RequestParam LocalDateTime endDate) {
+        var appointments = service.list(startDate, endDate);
+        var response = new CollectionResponse(false, appointments);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping()
