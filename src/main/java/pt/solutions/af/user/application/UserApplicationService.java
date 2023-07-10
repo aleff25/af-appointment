@@ -16,6 +16,7 @@ import pt.solutions.af.user.repository.CustomerRepository;
 import pt.solutions.af.user.repository.ProviderRepository;
 import pt.solutions.af.user.repository.UserRepository;
 import pt.solutions.af.workingplan.model.WorkingPlan;
+import springfox.documentation.annotations.Cacheable;
 
 import java.util.List;
 import java.util.UUID;
@@ -29,10 +30,12 @@ public class UserApplicationService implements UserDetailsService {
     private CustomerRepository customerRepository;
     private ProviderRepository providerRepository;
 
+    @Cacheable("customer_users")
     public Customer getCustomerById(String customerId) {
         return customerRepository.findById(customerId).get();
     }
 
+    @Cacheable("provider_users")
     public Provider getProviderById(String providerId) {
         return providerRepository.findById(providerId)
                 .get();
@@ -81,6 +84,7 @@ public class UserApplicationService implements UserDetailsService {
     }
 
     @Override
+    @Cacheable("auth_users")
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
         return userRepository.findByEmail(login);
     }
