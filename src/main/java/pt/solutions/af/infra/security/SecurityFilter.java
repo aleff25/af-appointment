@@ -26,12 +26,15 @@ public class SecurityFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         var tokenJWT = getToken(request);
 
-        if (tokenJWT != null && !request.getRequestURI().contains("login")) {
+        if (tokenJWT != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             var subject = tokenService.getSubject(tokenJWT);
-            System.out.println("FILTER");
             var user = userRepository.findByEmail(subject);
-            var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            if (tokenService.isTokenValid(tokenJWT, user)) {
+                var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
+
         }
 
         filterChain.doFilter(request, response);
@@ -40,7 +43,7 @@ public class SecurityFilter extends OncePerRequestFilter {
     public String getToken(HttpServletRequest request) {
         var authorizationHeader = request.getHeader("Authorization");
 
-        if (authorizationHeader != null && !authorizationHeader.contains("Basic")) {
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
 
             return authorizationHeader.replace("Bearer ", "");
         }

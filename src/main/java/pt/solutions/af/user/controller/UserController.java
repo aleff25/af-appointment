@@ -12,6 +12,7 @@ import pt.solutions.af.commons.entity.CollectionResponse;
 import pt.solutions.af.user.application.UserApplicationService;
 import pt.solutions.af.user.application.dto.CreateCustomerDTO;
 import pt.solutions.af.user.application.dto.CreateProviderDto;
+import pt.solutions.af.user.model.customer.CustomerListView;
 import pt.solutions.af.user.model.provider.ProviderListView;
 
 
@@ -40,6 +41,13 @@ public class UserController {
     public ResponseEntity<CollectionResponse<ProviderListView>> listProviders() {
         var providers = service.getAllProviders();
         var response = new CollectionResponse<>(false, providers);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/customers")
+    public ResponseEntity<CollectionResponse<CustomerListView>> listCustomers() {
+        var customers = service.getAllCustomers();
+        var response = new CollectionResponse<>(false, customers);
         return ResponseEntity.ok(response);
     }
 }

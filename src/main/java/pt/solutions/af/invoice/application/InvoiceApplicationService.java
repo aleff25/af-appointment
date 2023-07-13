@@ -12,7 +12,6 @@ import pt.solutions.af.invoice.repository.InvoiceRepository;
 import pt.solutions.af.notification.application.NotificationApplicationService;
 import pt.solutions.af.user.application.UserApplicationService;
 import pt.solutions.af.user.model.User;
-import pt.solutions.af.user.model.customer.Customer;
 import pt.solutions.af.utils.PdfGeneratorUtil;
 
 import java.io.File;
@@ -89,8 +88,8 @@ public class InvoiceApplicationService {
 
     @Transactional
     public void issueInvoicesForConfirmedAppointments() {
-        List<Customer> customers = userService.getAllCustomers();
-        for (Customer customer : customers) {
+        var customers = userService.getAllCustomers();
+        for (var customer : customers) {
             List<Appointment> appointmentsToIssueInvoice = appointmentService.getConfirmedAppointmentsByCustomerId(customer.getId());
             if (!appointmentsToIssueInvoice.isEmpty()) {
                 for (Appointment appointment : appointmentsToIssueInvoice) {

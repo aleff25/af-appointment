@@ -8,6 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 
 @Getter
 @AllArgsConstructor(staticName = "of")
@@ -21,22 +23,20 @@ public class RegisterAppointmentDTO {
     @NotBlank(message = "{RegisterAppointmentDTO.providerId.NotBlank}")
     private String providerId;
 
-    @NotBlank(message = "{RegisterAppointmentDTO.firstName.NotBlank}")
-    private String firstName;
-
-    @NotBlank(message = "{RegisterAppointmentDTO.lastName.NotBlank}")
-    private String lastName;
+    @NotNull(message = "{RegisterAppointmentDTO.date.NotNull}")
+    private LocalDateTime startDate;
 
     @NotNull(message = "{RegisterAppointmentDTO.date.NotNull}")
-    private String date;
+    private LocalDateTime endDate;
 
-    @NotNull(message = "{RegisterAppointmentDTO.timeStart.NotNull}")
-    private String timeStart;
+    private boolean newClient;
 
-    @NotNull(message = "{RegisterAppointmentDTO.timeEnd.NotNull}")
-    private String timeEnd;
+    private String firstName;
+
+    private String lastName;
 
     private String customerId;
+
     private String nif;
 }
 

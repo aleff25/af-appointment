@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pt.solutions.af.appointment.application.dto.AppointmentAvailableHoursDTO;
 import pt.solutions.af.appointment.application.dto.RegisterAppointmentDTO;
+import pt.solutions.af.appointment.application.validations.AppointmentSchedulerValidator;
 import pt.solutions.af.appointment.exception.AppointmentNotAvailableException;
 import pt.solutions.af.appointment.model.Appointment;
 import pt.solutions.af.appointment.model.AppointmentListView;
@@ -31,8 +32,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static pt.solutions.af.utils.DateUtils.changeDateStrToLocalDateTime;
-
 @Service
 @AllArgsConstructor
 @Log4j2
@@ -47,6 +46,8 @@ public class AppointmentApplicationService {
     private NotificationApplicationService notificationService;
 
     private SmsService smsService;
+
+    private List<AppointmentSchedulerValidator> shedulingValidators;
 
 
     public List<Appointment> getAppointmentByProviderId(String providerId) {
@@ -69,15 +70,14 @@ public class AppointmentApplicationService {
     @Transactional
     public void create(RegisterAppointmentDTO dto) {
 
-        LocalDateTime startDate = changeDateStrToLocalDateTime(dto.getDate(), dto.getTimeStart());
-        LocalDateTime endDate = changeDateStrToLocalDateTime(dto.getDate(), dto.getTimeEnd());
-
         AppointmentAvailableHoursDTO appointmentAvailableHoursDTO = AppointmentAvailableHoursDTO.of(dto.getCustomerId(),
-                dto.getProviderId(), dto.getWorkId(), startDate, endDate);
+                dto.getProviderId(), dto.getWorkId(), dto.getStartDate(), dto.getEndDate());
 
         if (!isAvailable(appointmentAvailableHoursDTO)) {
             throw new AppointmentNotAvailableException();
         }
+
+        shedulingValidators.forEach(validator -> validator.validate(dto));
 
         Work work = workService.getById(dto.getWorkId());
         Customer customer;
@@ -94,8 +94,8 @@ public class AppointmentApplicationService {
                 .customer(customer)
                 .provider(provider)
                 .work(work)
-                .startDate(startDate)
-                .endDate(startDate.plusMinutes(work.getDuration()))
+                .startDate(dto.getStartDate())
+                .endDate(dto.getEndDate())
                 .build();
 
         appointment.newAppointment();

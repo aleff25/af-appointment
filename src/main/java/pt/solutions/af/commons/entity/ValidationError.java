@@ -11,4 +11,7 @@ public class ValidationError {
     private String message;
     private String detailedMessage;
 
+    public ValidationError(String detailedMessage) {
+        this.detailedMessage = detailedMessage;
+    }
 }

@@ -1,90 +1,73 @@
 package pt.solutions.af.infra.exception;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-import pt.solutions.af.commons.entity.ErrorResponse;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+import pt.solutions.af.commons.exception.ValidationException;
 
-import java.nio.file.AccessDeniedException;
-
-@ControllerAdvice
+@RestControllerAdvice
 @Slf4j
-public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
+public class RestResponseEntityExceptionHandler {
 
-    @ExceptionHandler(value
-            = {IllegalArgumentException.class, IllegalStateException.class})
-    protected ResponseEntity<Object> handleConflict(
-            RuntimeException ex, WebRequest request) {
+    @Autowired
+    private MessageSource messageSource;
 
-        ErrorResponse errorResponse = ErrorResponse.builder()
-                .code(HttpStatus.CONFLICT.name())
-                .message(ex.getMessage())
-                .build();
-
-        ex.printStackTrace();
-        return ResponseEntity.status(HttpStatus.CONFLICT)
-                .body(errorResponse);
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity handleError404() {
+        return ResponseEntity.notFound().build();
     }
 
-
-//    @Override
-//    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
-//                                                                  HttpHeaders headers,
-//                                                                  HttpStatus status, WebRequest request) {
-//        List<ValidationError> errors = new ArrayList<>();
-//
-//        for (FieldError fieldError : ex.getBindingResult().getFieldErrors()) {
-//            String code = fieldError.getCode();
-//            String message = fieldError.getDefaultMessage();
-//            String detailedMessage = fieldError.toString();
-//            ValidationError error = new ValidationError(code, message, detailedMessage);
-//            errors.add(error);
-//        }
-//
-//        for (ObjectError objectError : ex.getBindingResult().getGlobalErrors()) {
-//            String code = objectError.getCode();
-//            String message = objectError.getDefaultMessage();
-//            String detailedMessage = objectError.toString();
-//            ValidationError error = new ValidationError(code, message, detailedMessage);
-//            errors.add(error);
-//        }
-//
-//        ErrorResponse errorResponse = ErrorResponse.builder()
-//                .code(HttpStatus.BAD_REQUEST.name())
-//                .message("Validation failed")
-//                .details(errors)
-//                .build();
-//
-//        log.error("Error: {}", errorResponse);
-//        return ResponseEntity.badRequest().body(errorResponse);
-//
-//    }
-
-    @ExceptionHandler({AccessDeniedException.class})
-    public ResponseEntity<Object> handleAccessDeniedException(
-            Exception ex, WebRequest request) {
-        log.error(ex.getMessage());
-        return new ResponseEntity<Object>(
-                "Access denied.", new HttpHeaders(), HttpStatus.FORBIDDEN);
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity handleError400(MethodArgumentNotValidException ex) {
+        var errors = ex.getFieldErrors();
+        return ResponseEntity.badRequest().body(errors.stream().map(ErrorValidationData::new).toList());
     }
 
-    @ExceptionHandler({Exception.class})
-    protected ResponseEntity<Object> handleOthersExceptions(
-            RuntimeException ex, WebRequest request) {
-
-        ErrorResponse errorResponse = ErrorResponse.builder()
-                .code(HttpStatus.INTERNAL_SERVER_ERROR.name())
-                .message(ex.getMessage())
-                .build();
-
-        ex.printStackTrace();
-
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(errorResponse);
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity handleError400(HttpMessageNotReadableException ex) {
+        return ResponseEntity.badRequest().body(ex.getMessage());
     }
+
+    @ExceptionHandler(ValidationException.class)
+    public ResponseEntity handleErrorBusiness(ValidationException ex) {
+        return ResponseEntity.badRequest().body(ex.getMessage());
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity handleErrorBadCredentials() {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciais inválidas");
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity handleErrorAuthentication() {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Falha na autenticação");
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity handleErrorAcessoNegado() {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Acesso negado");
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity handleError500(Exception ex) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro: " + ex.getLocalizedMessage());
+    }
+
+    private record ErrorValidationData(String campo, String message) {
+        public ErrorValidationData(FieldError error) {
+            this(error.getField(), error.getDefaultMessage());
+        }
+    }
+
 }

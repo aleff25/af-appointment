@@ -12,22 +12,9 @@ import java.util.List;
 
 public interface AppointmentRepository extends JpaRepository<Appointment, String> {
 
-    @Query(value = "SELECT a.id," +
-            "       a.start_date," +
-            "       a.end_date," +
-            "       Jsonb_agg(Jsonb_build_object('id', p.id, 'name', p.name)) AS provider," +
-            "       Jsonb_agg(Jsonb_build_object('id', c.id, 'name', c.name)) AS customer," +
-            "       Jsonb_agg(Jsonb_build_object('id', w.id, 'name', w.name)) AS work " +
-            "FROM   appointments a" +
-            "       inner join users p" +
-            "               ON p.id = a.provider_id" +
-            "       inner join users c" +
-            "               ON c.id = a.customer_id" +
-            "       inner join works w" +
-            "               ON w.id = a.work_id" +
-            "WHERE  a.start_date >= :start_date" +
-            "       AND a.end_date <= :end_date" +
-            "GROUP  BY a.id", nativeQuery = true)
+    @Query("SELECT new " + AppointmentListView.FULL_NAME + "(t)" +
+            "FROM Appointment t WHERE t.startDate >=  :startDate AND " +
+            "t.endDate <= :endDate")
     List<AppointmentListView> getAllBetweenDates(@Param("startDate") LocalDateTime startDate,
                                                  @Param("endDate") LocalDateTime endDate);
 
@@ -52,4 +39,8 @@ public interface AppointmentRepository extends JpaRepository<Appointment, String
 
     @Query("select a from Appointment a where a.status = 'FINISHED' and :date >= a.endDate")
     List<Appointment> findFinishedWithEndBeforeDate(@Param("date") LocalDateTime date);
+
+
+    @Query("select count(a) > 0 from Appointment a where a.provider.id = :providerId and  a.startDate >=:dayStart and  a.startDate <=:dayEnd")
+    boolean existsByProviderWithStartInPeriod(@Param("providerId") String providerId, @Param("dayStart") LocalDateTime startDate, @Param("dayEnd") LocalDateTime endDate);
 }
