@@ -1,14 +1,16 @@
 package pt.solutions.af.notification.application;
 
 
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import pt.solutions.af.appointment.model.Appointment;
+import pt.solutions.af.chat.model.ChatMessage;
 import pt.solutions.af.email.application.EmailApplicationService;
+import pt.solutions.af.exchange.model.ExchangeRequest;
 import pt.solutions.af.invoice.model.Invoice;
 import pt.solutions.af.notification.model.Notification;
 import pt.solutions.af.notification.repository.NotificationRepository;
@@ -20,6 +22,7 @@ import java.util.List;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class NotificationApplicationService {
 
     private NotificationRepository repository;
@@ -52,10 +55,9 @@ public class NotificationApplicationService {
         if (notification.getUserId().equals(userId)) {
             notification.setRead(true);
             repository.save(notification);
+        } else {
+            throw new AccessDeniedException("Unauthorized");
         }
-//        else {
-//            throw new org.springframework.security.access.AccessDeniedException("Unauthorized");
-//        }
     }
 
     public void markAllAsRead(String userId) {
@@ -153,25 +155,25 @@ public class NotificationApplicationService {
         }
     }
 
-//    public void newExchangeAcceptedNotification(ExchangeRequest exchangeRequest, boolean sendEmail) {
-//        String title = "Exchange request accepted";
-//        String message = "Someone accepted your appointment exchange request from " + exchangeRequest.getRequested().getStart() + " to " + exchangeRequest.getRequestor().getStart();
-//        String url = "/appointments/" + exchangeRequest.getRequested();
-//        newNotification(title, message, url, exchangeRequest.getRequested().getCustomer());
-//        if (sendEmail && mailingEnabled) {
-//            emailService.sendExchangeRequestAcceptedNotification(exchangeRequest);
-//        }
-//    }
-//
-//    public void newExchangeRejectedNotification(ExchangeRequest exchangeRequest, boolean sendEmail) {
-//        String title = "Exchange request rejected";
-//        String message = "Someone rejected your appointment exchange request from " + exchangeRequest.getRequestor().getStart() + " to " + exchangeRequest.getRequested().getStart();
-//        String url = "/appointments/" + exchangeRequest.getRequestor();
-//        newNotification(title, message, url, exchangeRequest.getRequestor().getCustomer());
-//        if (sendEmail && mailingEnabled) {
-//            emailService.sendExchangeRequestRejectedNotification(exchangeRequest);
-//        }
-//    }
+    public void newExchangeAcceptedNotification(ExchangeRequest exchangeRequest, boolean sendEmail) {
+        String title = "Exchange request accepted";
+        String message = "Someone accepted your appointment exchange request from " + exchangeRequest.getRequested().getStartDate() + " to " + exchangeRequest.getRequestor().getStartDate();
+        String url = "/appointments/" + exchangeRequest.getRequested();
+        newNotification(title, message, url, exchangeRequest.getRequested().getCustomer());
+        if (sendEmail && mailingEnabled) {
+            emailService.sendExchangeRequestAcceptedNotification(exchangeRequest);
+        }
+    }
+
+    public void newExchangeRejectedNotification(ExchangeRequest exchangeRequest, boolean sendEmail) {
+        String title = "Exchange request rejected";
+        String message = "Someone rejected your appointment exchange request from " + exchangeRequest.getRequestor().getStartDate() + " to " + exchangeRequest.getRequested().getStartDate();
+        String url = "/appointments/" + exchangeRequest.getRequestor();
+        newNotification(title, message, url, exchangeRequest.getRequestor().getCustomer());
+        if (sendEmail && mailingEnabled) {
+            emailService.sendExchangeRequestRejectedNotification(exchangeRequest);
+        }
+    }
 
     public void newAppointmentRejectionAcceptedNotification(Appointment appointment, boolean sendEmail) {
         String title = "Rejection accepted";
@@ -183,13 +185,13 @@ public class NotificationApplicationService {
         }
     }
 
-//    public void newChatMessageNotification(ChatMessage chatMessage, boolean sendEmail) {
-//        String title = "New chat message";
-//        String message = "You have new chat message from " + chatMessage.getAuthor().getFirstName() + " regarding appointment scheduled at " + chatMessage.getAppointment().getStart();
-//        String url = "/appointments/" + chatMessage.getAppointment().getId();
-//        newNotification(title, message, url, chatMessage.getAuthor() == chatMessage.getAppointment().getProvider() ? chatMessage.getAppointment().getCustomer() : chatMessage.getAppointment().getProvider());
-//        if (sendEmail && mailingEnabled) {
-//            emailService.sendNewChatMessageNotification(chatMessage);
-//        }
-//    }
+    public void newChatMessageNotification(ChatMessage chatMessage, boolean sendEmail) {
+        String title = "New chat message";
+        String message = "You have new chat message from " + chatMessage.getAuthor().getFirstName() + " regarding appointment scheduled at " + chatMessage.getAppointment().getStartDate();
+        String url = "/appointments/" + chatMessage.getAppointment().getId();
+        newNotification(title, message, url, chatMessage.getAuthor() == chatMessage.getAppointment().getProvider() ? chatMessage.getAppointment().getCustomer() : chatMessage.getAppointment().getProvider());
+        if (sendEmail && mailingEnabled) {
+            emailService.sendNewChatMessageNotification(chatMessage);
+        }
+    }
 }

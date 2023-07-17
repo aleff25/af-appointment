@@ -9,10 +9,14 @@ import pt.solutions.af.appointment.application.dto.AppointmentAvailableHoursDTO;
 import pt.solutions.af.appointment.application.dto.RegisterAppointmentDTO;
 import pt.solutions.af.appointment.application.validations.AppointmentSchedulerValidator;
 import pt.solutions.af.appointment.exception.AppointmentNotAvailableException;
+import pt.solutions.af.appointment.exception.AppointmentNotFoundException;
 import pt.solutions.af.appointment.model.Appointment;
 import pt.solutions.af.appointment.model.AppointmentListView;
+import pt.solutions.af.appointment.model.AppointmentStatus;
 import pt.solutions.af.appointment.model.AppointmentStatusEnum;
 import pt.solutions.af.appointment.repository.AppointmentRepository;
+import pt.solutions.af.chat.model.ChatMessage;
+import pt.solutions.af.chat.repository.ChatMessageRepository;
 import pt.solutions.af.notification.application.NotificationApplicationService;
 import pt.solutions.af.sms.application.SmsService;
 import pt.solutions.af.user.application.UserApplicationService;
@@ -39,6 +43,8 @@ public class AppointmentApplicationService {
 
     private AppointmentRepository repository;
 
+    private ChatMessageRepository chatMessageRepository;
+
     private UserApplicationService userService;
 
     private WorkApplicationService workService;
@@ -49,6 +55,10 @@ public class AppointmentApplicationService {
 
     private List<AppointmentSchedulerValidator> shedulingValidators;
 
+    public Appointment getAppointmentById(String id) {
+        return repository.findById(id)
+                .orElseThrow(AppointmentNotFoundException::new);
+    }
 
     public List<Appointment> getAppointmentByProviderId(String providerId) {
         return repository.findAllByProviderId(providerId);
@@ -186,20 +196,20 @@ public class AppointmentApplicationService {
         List<TimePeriod> toAdd = new ArrayList<>();
 
         for (Appointment appointment : appointments) {
-            for (TimePeriod peroid : periods) {
+            for (TimePeriod period : periods) {
                 LocalDateTime startDate = appointment.getStartDate();
                 LocalDateTime endDate = appointment.getEndDate();
-                if ((startDate.toLocalTime().isBefore(peroid.getStart()) || startDate.toLocalTime().equals(peroid.getStart()))
-                        && endDate.toLocalTime().isAfter(peroid.getStart()) && endDate.toLocalTime().isBefore(peroid.getEnd())) {
-                    peroid.setStart(endDate.toLocalTime());
+                if ((startDate.toLocalTime().isBefore(period.getStart()) || startDate.toLocalTime().equals(period.getStart()))
+                        && endDate.toLocalTime().isAfter(period.getStart()) && endDate.toLocalTime().isBefore(period.getEnd())) {
+                    period.setStart(endDate.toLocalTime());
                 }
-                if (startDate.toLocalTime().isAfter(peroid.getStart()) && startDate.toLocalTime().isBefore(peroid.getEnd())
-                        && endDate.toLocalTime().isAfter(peroid.getEnd()) || endDate.toLocalTime().equals(peroid.getEnd())) {
-                    peroid.setEnd(startDate.toLocalTime());
+                if (startDate.toLocalTime().isAfter(period.getStart()) && startDate.toLocalTime().isBefore(period.getEnd())
+                        && endDate.toLocalTime().isAfter(period.getEnd()) || endDate.toLocalTime().equals(period.getEnd())) {
+                    period.setEnd(startDate.toLocalTime());
                 }
-                if (startDate.toLocalTime().isAfter(peroid.getStart()) && startDate.toLocalTime().isBefore(peroid.getEnd())) {
-                    toAdd.add(new TimePeriod(peroid.getStart(), startDate.toLocalTime()));
-                    peroid.setStart(endDate.toLocalTime());
+                if (startDate.toLocalTime().isAfter(period.getStart()) && startDate.toLocalTime().isBefore(period.getEnd())) {
+                    toAdd.add(new TimePeriod(period.getStart(), startDate.toLocalTime()));
+                    period.setStart(endDate.toLocalTime());
                 }
             }
         }
@@ -214,5 +224,26 @@ public class AppointmentApplicationService {
 
     public List<AppointmentListView> list(LocalDateTime startDate, LocalDateTime endDate) {
         return repository.getAllBetweenDates(startDate, endDate);
+    }
+
+    public void addMessageToAppointmentChat(String appointmentId, String authorId, ChatMessage chatMessage) {
+        Appointment appointment = getAppointmentById(appointmentId);
+        if (appointment.getProvider().getId() == authorId || appointment.getCustomer().getId() == authorId) {
+            chatMessage.setAuthor(userService.findById(authorId));
+            chatMessage.setAppointment(appointment);
+            chatMessage.setCreatedAt(LocalDateTime.now());
+            chatMessageRepository.save(chatMessage);
+            notificationService.newChatMessageNotification(chatMessage, true);
+        } else {
+            throw new org.springframework.security.access.AccessDeniedException("Unauthorized");
+        }
+    }
+
+    public void updateAppointmentsStatusesWithExpiredExchangeRequest() {
+        repository.findExchangeRequestWithStartBefore(LocalDateTime.now().plusDays(1))
+                .forEach(appointment -> {
+                    appointment.setStatus(AppointmentStatusEnum.SCHEDULED);
+                    update(appointment);
+                });
     }
 }

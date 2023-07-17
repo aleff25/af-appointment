@@ -21,3 +21,18 @@ CREATE TABLE IF NOT EXISTS works_providers
     CONSTRAINT fk_work_works_providers FOREIGN KEY (work_id) REFERENCES works (id)
 );
 
+CREATE TABLE IF NOT EXISTS corporate_customers (
+    customer_id int(11) NOT NULL,
+    vat_number VARCHAR(256),
+    company_name VARCHAR(256),
+    PRIMARY KEY (customer_id),
+    CONSTRAINT FK_corporate_customer_user FOREIGN KEY (customer_id)
+    REFERENCES users (id)
+);
+
+CREATE TABLE IF NOT EXISTS retail_customers (
+    customer_id int(11) NOT NULL,
+    PRIMARY KEY (customer_id),
+    CONSTRAINT FK_retail_customer_user FOREIGN KEY (customer_id)
+    REFERENCES users (id)
+);

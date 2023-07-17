@@ -3,17 +3,14 @@ package pt.solutions.af.appointment.controller;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
 import pt.solutions.af.appointment.application.AppointmentApplicationService;
 import pt.solutions.af.appointment.application.dto.RegisterAppointmentDTO;
 import pt.solutions.af.appointment.model.AppointmentListView;
+import pt.solutions.af.chat.model.ChatMessage;
 import pt.solutions.af.commons.entity.CollectionResponse;
+import pt.solutions.af.user.model.auth.AuthUserView;
 
 import java.time.LocalDateTime;
 
@@ -44,5 +41,12 @@ public class AppointmentController {
     public ResponseEntity<Void> updateAllAppointmentStatuses() {
         service.updateAllAppointmentsStatuses();
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/messages/new")
+    public String addNewChatMessage(@ModelAttribute("chatMessage") ChatMessage chatMessage, @RequestParam("appointmentId") String appointmentId, @AuthenticationPrincipal AuthUserView currentUser) {
+        String authorId = currentUser.getId();
+        service.addMessageToAppointmentChat(appointmentId, authorId, chatMessage);
+        return "redirect:/appointments/" + appointmentId;
     }
 }

@@ -12,7 +12,10 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 import pt.solutions.af.appointment.model.Appointment;
+import pt.solutions.af.chat.model.ChatMessage;
+import pt.solutions.af.exchange.model.ExchangeRequest;
 import pt.solutions.af.invoice.model.Invoice;
+import pt.solutions.af.user.model.User;
 import pt.solutions.af.utils.PdfGeneratorUtil;
 
 import java.io.File;
@@ -124,15 +127,15 @@ public class EmailApplicationService {
         sendEmail(appointment.getCustomer().getEmail(), "Rejection request accepted", "appointmentRejectionAccepted", context, null);
     }
 
-//    @Async
-//    public void sendNewChatMessageNotification(ChatMessage chatMessage) {
-//        Context context = new Context();
-//        User recipent = chatMessage.getAuthor() == chatMessage.getAppointment().getProvider() ? chatMessage.getAppointment().getCustomer() : chatMessage.getAppointment().getProvider();
-//        context.setVariable("recipent", recipent);
-//        context.setVariable("appointment", chatMessage.getAppointment());
-//        context.setVariable("url", baseUrl + "/appointments/" + chatMessage.getAppointment().getId());
-//        sendEmail(recipent.getEmail(), "New chat message", "newChatMessage", context, null);
-//    }
+    @Async
+    public void sendNewChatMessageNotification(ChatMessage chatMessage) {
+        Context context = new Context();
+        User recipent = chatMessage.getAuthor() == chatMessage.getAppointment().getProvider() ? chatMessage.getAppointment().getCustomer() : chatMessage.getAppointment().getProvider();
+        context.setVariable("recipent", recipent);
+        context.setVariable("appointment", chatMessage.getAppointment());
+        context.setVariable("url", baseUrl + "/appointments/" + chatMessage.getAppointment().getId());
+        sendEmail(recipent.getEmail(), "New chat message", "newChatMessage", context, null);
+    }
 
     @Async
     public void sendNewExchangeRequestedNotification(Appointment oldAppointment, Appointment newAppointment) {
@@ -143,17 +146,17 @@ public class EmailApplicationService {
         sendEmail(newAppointment.getCustomer().getEmail(), "New Appointment Exchange Request", "newExchangeRequest", context, null);
     }
 
-//    public void sendExchangeRequestAcceptedNotification(ExchangeRequest exchangeRequest) {
-//        Context context = new Context();
-//        context.setVariable("exchangeRequest", exchangeRequest);
-//        context.setVariable("url", baseUrl + "/appointments/" + exchangeRequest.getRequested().getId());
-//        sendEmail(exchangeRequest.getRequested().getCustomer().getEmail(), "Exchange request accepted", "exchangeRequestAccepted", context, null);
-//    }
-//
-//    public void sendExchangeRequestRejectedNotification(ExchangeRequest exchangeRequest) {
-//        Context context = new Context();
-//        context.setVariable("exchangeRequest", exchangeRequest);
-//        context.setVariable("url", baseUrl + "/appointments/" + exchangeRequest.getRequestor().getId());
-//        sendEmail(exchangeRequest.getRequestor().getCustomer().getEmail(), "Exchange request rejected", "exchangeRequestRejected", context, null);
-//    }
+    public void sendExchangeRequestAcceptedNotification(ExchangeRequest exchangeRequest) {
+        Context context = new Context();
+        context.setVariable("exchangeRequest", exchangeRequest);
+        context.setVariable("url", baseUrl + "/appointments/" + exchangeRequest.getRequested().getId());
+        sendEmail(exchangeRequest.getRequested().getCustomer().getEmail(), "Exchange request accepted", "exchangeRequestAccepted", context, null);
+    }
+
+    public void sendExchangeRequestRejectedNotification(ExchangeRequest exchangeRequest) {
+        Context context = new Context();
+        context.setVariable("exchangeRequest", exchangeRequest);
+        context.setVariable("url", baseUrl + "/appointments/" + exchangeRequest.getRequestor().getId());
+        sendEmail(exchangeRequest.getRequestor().getCustomer().getEmail(), "Exchange request rejected", "exchangeRequestRejected", context, null);
+    }
 }
