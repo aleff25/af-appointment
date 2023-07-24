@@ -19,6 +19,7 @@ import java.time.temporal.TemporalAdjusters;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static pt.solutions.af.TestUtls.randomLong;
+import static pt.solutions.af.TestUtls.randomUUID;
 import static pt.solutions.af.appointment.AppointmentTestUtils.registerAppointment;
 import static pt.solutions.af.user.UserTestUtils.registerProvider;
 
@@ -97,42 +98,42 @@ class AppointmentApplicationServiceTest {
 
     private static RegisterAppointmentDTO newAppointment() {
         return RegisterAppointmentDTO.of(
-                randomLong().toString(),
-                randomLong().toString(),
+                randomUUID(),
+                randomUUID(),
                 LocalDateTime.now().plusMinutes(30),
                 LocalDateTime.now().plusHours(1),
                 false,
                 "Customer",
                 "Doe",
-                randomLong().toString(),
+                randomUUID(),
                 randomLong().toString()
         );
     }
 
     private static RegisterAppointmentDTO newAppointment(LocalDateTime start, LocalDateTime end) {
         return RegisterAppointmentDTO.of(
-                randomLong().toString(),
-                randomLong().toString(),
+                randomUUID(),
+                randomUUID(),
                 start,
                 end,
                 false,
                 "Customer",
                 "Doe",
-                randomLong().toString(),
+                randomUUID(),
                 randomLong().toString()
         );
     }
 
     private static RegisterAppointmentDTO newAppointment(String providerId, LocalDateTime start, LocalDateTime end) {
         return RegisterAppointmentDTO.of(
-                randomLong().toString(),
+                randomUUID(),
                 providerId,
                 start,
                 end,
                 false,
                 "Customer",
                 "Doe",
-                randomLong().toString(),
+                randomUUID(),
                 randomLong().toString()
         );
     }
