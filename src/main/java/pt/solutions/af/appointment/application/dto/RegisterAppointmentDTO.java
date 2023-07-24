@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Getter
 @AllArgsConstructor(staticName = "of")
 @NoArgsConstructor(access = AccessLevel.PRIVATE, force = true)
-@ApiModel(description = "Basic information of the user")
+@ApiModel(description = "Create an appointment")
 public class RegisterAppointmentDTO {
 
     @NotBlank(message = "{RegisterAppointmentDTO.workId.NotBlank}")

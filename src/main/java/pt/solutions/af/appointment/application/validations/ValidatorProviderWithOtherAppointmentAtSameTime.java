@@ -17,7 +17,7 @@ public class ValidatorProviderWithOtherAppointmentAtSameTime implements Appointm
         var providerAlreadyHasOtherAppointment = repository.existsByProviderWithStartInPeriod(dto.getProviderId(),
                 dto.getStartDate(), dto.getEndDate());
         if (providerAlreadyHasOtherAppointment) {
-            throw new ValidationException("Médico já possui outra consulta agendada nesse mesmo horário");
+            throw new ValidationException("Provedor já possui outra consulta agendada nesse mesmo horário");
         }
     }
 

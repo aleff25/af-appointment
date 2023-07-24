@@ -16,7 +16,7 @@ public class ValidatorBusinessOpeningHour implements AppointmentSchedulerValidat
         var beforeOpen = appointmentDate.getHour() < 7;
         var beforeClosed = appointmentDate.getHour() > 18;
         if (sunday || beforeOpen || beforeClosed) {
-            throw new ValidationException("Consulta fora do horário de funcionamento da clínica");
+            throw new ValidationException("Consulta fora do horário de funcionamento do estabelecimento");
         }
 
     }
