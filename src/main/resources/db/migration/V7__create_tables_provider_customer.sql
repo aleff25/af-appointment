@@ -17,22 +17,28 @@ CREATE TABLE IF NOT EXISTS works_providers
 (
     work_id character varying(255) NOT NULL,
     user_id character varying(255) NOT NULL,
-    CONSTRAINT fk_provider_works_providers FOREIGN KEY (user_id) REFERENCES providers (provider_id),
-    CONSTRAINT fk_work_works_providers FOREIGN KEY (work_id) REFERENCES works (id)
+    PRIMARY KEY (work_id, user_id),
+    CONSTRAINT fk_provider_works_providers FOREIGN KEY (user_id) REFERENCES providers (provider_id) ON DELETE CASCADE
+        ON UPDATE CASCADE,
+    CONSTRAINT fk_work_works_providers FOREIGN KEY (work_id) REFERENCES works (id) ON DELETE CASCADE
+        ON UPDATE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS corporate_customers (
-    customer_id int(11) NOT NULL,
-    vat_number VARCHAR(256),
+CREATE TABLE IF NOT EXISTS corporate_customers
+(
+    customer_id  character varying(255) NOT NULL,
+    vat_number   VARCHAR(256),
     company_name VARCHAR(256),
     PRIMARY KEY (customer_id),
     CONSTRAINT FK_corporate_customer_user FOREIGN KEY (customer_id)
-    REFERENCES users (id)
+        REFERENCES users (id)
 );
 
-CREATE TABLE IF NOT EXISTS retail_customers (
-    customer_id int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS retail_customers
+(
+    customer_id character varying(255) NOT NULL,
+    vat_number  VARCHAR(256),
     PRIMARY KEY (customer_id),
     CONSTRAINT FK_retail_customer_user FOREIGN KEY (customer_id)
-    REFERENCES users (id)
+        REFERENCES users (id)
 );

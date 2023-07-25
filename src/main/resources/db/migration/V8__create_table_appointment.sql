@@ -19,6 +19,6 @@ CREATE TABLE IF NOT EXISTS appointments
     CONSTRAINT fk_provider_appointments FOREIGN KEY (provider_id) REFERENCES users (id),
     CONSTRAINT fk_customer_appointments FOREIGN KEY (customer_id) REFERENCES users (id),
     CONSTRAINT fk_invoices_appointments FOREIGN KEY (invoice_id) REFERENCES invoices (id),
-    CONSTRAINT fk_work_appointments FOREIGN KEY (work_id) REFERENCES works (id),
+    CONSTRAINT fk_work_appointments FOREIGN KEY (work_id) REFERENCES works (id)
 );
 

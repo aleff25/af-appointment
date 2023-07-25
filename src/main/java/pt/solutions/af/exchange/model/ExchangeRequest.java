@@ -1,7 +1,17 @@
 package pt.solutions.af.exchange.model;
 
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import pt.solutions.af.appointment.model.Appointment;
@@ -19,6 +29,7 @@ import java.time.LocalDateTime;
 public class ExchangeRequest extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "exchange_status")
     private ExchangeStatusEnum status;
 
     @OneToOne

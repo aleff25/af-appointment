@@ -10,7 +10,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import pt.solutions.af.user.model.User;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,15 +25,6 @@ public class AuthUserView implements UserDetails {
     private String password;
 
     private List<String> roles;
-
-    public AuthUserView(String id, String firstName, String lastName, String email, String password, String role) {
-        this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.password = password;
-        this.roles = Collections.singletonList(role);
-    }
 
     public AuthUserView(User user) {
         this.id = user.getId();

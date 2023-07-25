@@ -1,16 +1,16 @@
 package pt.solutions.af.appointment.application.validations;
 
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import pt.solutions.af.appointment.application.dto.RegisterAppointmentDTO;
 import pt.solutions.af.appointment.repository.AppointmentRepository;
 import pt.solutions.af.commons.exception.ValidationException;
 
 @Component
+@AllArgsConstructor
 public class ValidatorProviderWithOtherAppointmentAtSameTime implements AppointmentSchedulerValidator {
 
-    @Autowired
     private AppointmentRepository repository;
 
     public void validate(RegisterAppointmentDTO dto) {

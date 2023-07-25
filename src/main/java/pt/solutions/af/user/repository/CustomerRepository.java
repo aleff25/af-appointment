@@ -10,7 +10,7 @@ import java.util.List;
 public interface CustomerRepository extends JpaRepository<Customer, String> {
 
     @Query("SELECT new " + CustomerListView.FULL_NAME + "(u)" +
-            " FROM User u JOIN u.userRoles ur JOIN ur.role r WHERE u.provider = false")
+            " FROM User u WHERE u.provider = false")
     List<CustomerListView> getAllCustomers();
 
 }

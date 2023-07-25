@@ -10,6 +10,6 @@ import java.util.List;
 public interface ProviderRepository extends JpaRepository<Provider, String> {
 
     @Query("SELECT new " + ProviderListView.FULL_NAME + "(u)" +
-            " FROM User u JOIN u.userRoles ur JOIN ur.role r WHERE u.provider = true")
+            " FROM User u WHERE u.provider = true")
     List<ProviderListView> findAllProviders();
 }

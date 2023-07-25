@@ -2,7 +2,11 @@ package pt.solutions.af.appointment.model;
 
 import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.Type;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -24,6 +28,7 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
+@Builder
 @Table(name = "appointments")
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -72,19 +77,8 @@ public class Appointment extends BaseEntity implements Comparable<Appointment> {
     private LocalDateTime lastModifiedAt;
 
     @LastModifiedBy
-    private LocalDateTime lastModifiedBy;
+    private String lastModifiedBy;
 
-    @Builder
-    public Appointment(LocalDateTime startDate, LocalDateTime endDate,
-                       AppointmentStatusEnum status, Provider provider, Customer customer, Work work, Invoice invoice) {
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.status = status;
-        this.provider = provider;
-        this.customer = customer;
-        this.work = work;
-        this.invoice = invoice;
-    }
 
     public void newAppointment() {
         this.status = AppointmentStatusEnum.SCHEDULED;

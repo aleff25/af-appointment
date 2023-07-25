@@ -12,7 +12,6 @@ import pt.solutions.af.commons.entity.BaseEntity;
 import pt.solutions.af.notification.model.Notification;
 import pt.solutions.af.user.model.auth.AuthUserView;
 import pt.solutions.af.user.model.auth.Role;
-import pt.solutions.af.user.model.auth.UserRole;
 
 import java.util.List;
 
@@ -45,9 +44,6 @@ public class User extends BaseEntity {
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private List<Role> roles;
-
-    @OneToMany(mappedBy = "user")
-    private List<UserRole> userRoles;
 
     public User(AuthUserView user) {
         this.firstName = user.getFirstName();

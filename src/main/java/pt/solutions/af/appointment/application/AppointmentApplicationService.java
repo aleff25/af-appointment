@@ -5,14 +5,11 @@ import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pt.solutions.af.appointment.application.dto.AppointmentAvailableHoursDTO;
 import pt.solutions.af.appointment.application.dto.RegisterAppointmentDTO;
 import pt.solutions.af.appointment.application.validations.AppointmentSchedulerValidator;
-import pt.solutions.af.appointment.exception.AppointmentNotAvailableException;
 import pt.solutions.af.appointment.exception.AppointmentNotFoundException;
 import pt.solutions.af.appointment.model.Appointment;
 import pt.solutions.af.appointment.model.AppointmentListView;
-import pt.solutions.af.appointment.model.AppointmentStatus;
 import pt.solutions.af.appointment.model.AppointmentStatusEnum;
 import pt.solutions.af.appointment.repository.AppointmentRepository;
 import pt.solutions.af.chat.model.ChatMessage;
@@ -22,19 +19,11 @@ import pt.solutions.af.sms.application.SmsService;
 import pt.solutions.af.user.application.UserApplicationService;
 import pt.solutions.af.user.model.customer.Customer;
 import pt.solutions.af.user.model.provider.Provider;
-import pt.solutions.af.utils.TimePeriod;
 import pt.solutions.af.work.application.WorkApplicationService;
 import pt.solutions.af.work.model.Work;
-import pt.solutions.af.workingplan.model.DayPlan;
-import pt.solutions.af.workingplan.model.WorkingPlan;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -68,24 +57,9 @@ public class AppointmentApplicationService {
         return repository.findAllByCustomerId(customerId);
     }
 
-    public List<Appointment> getAppointmentsByProviderAtDay(String providerId, LocalDate day) {
-        return repository.findByProviderIdWithStartInPeriod(providerId, day.atStartOfDay(), day.atStartOfDay().plusDays(1));
-    }
-
-    public List<Appointment> getAppointmentsByCustomersAtDay(String customerId, LocalDate day) {
-        return repository.findByCustomerIdWithStartInPeriod(customerId, day.atStartOfDay(), day.atStartOfDay().plusDays(1));
-    }
-
 
     @Transactional
     public void create(RegisterAppointmentDTO dto) {
-
-        AppointmentAvailableHoursDTO appointmentAvailableHoursDTO = AppointmentAvailableHoursDTO.of(dto.getCustomerId(),
-                dto.getProviderId(), dto.getWorkId(), dto.getStartDate(), dto.getEndDate());
-
-        if (!isAvailable(appointmentAvailableHoursDTO)) {
-            throw new AppointmentNotAvailableException();
-        }
 
         shedulingValidators.forEach(validator -> validator.validate(dto));
 
@@ -144,80 +118,6 @@ public class AppointmentApplicationService {
         repository.save(appointment);
     }
 
-    public List<TimePeriod> getAvailableHours(AppointmentAvailableHoursDTO dto) {
-
-        LocalDate date = dto.getStartDate().toLocalDate();
-
-        Provider provider = (Provider) userService.findById(dto.getProviderId());
-        WorkingPlan workingPlan = provider.getWorkingPlan();
-        DayPlan dayPlan = workingPlan.getDay(date.getDayOfWeek().toString().toLowerCase());
-
-
-        List<Appointment> providerAppointments = getAppointmentsByProviderAtDay(dto.getProviderId(), date);
-        List<Appointment> customerAppointments = new ArrayList<>();
-        if (StringUtils.isNotBlank(dto.getCustomerId())) {
-            customerAppointments = getAppointmentsByCustomersAtDay(dto.getCustomerId(), date);
-        }
-
-        List<TimePeriod> availablePeriods = dayPlan.getTimePeriodsWithBreaksExcluded();
-        availablePeriods = excludeAppointmentsFromTimePeriods(availablePeriods, providerAppointments);
-        availablePeriods = excludeAppointmentsFromTimePeriods(availablePeriods, customerAppointments);
-
-        return calculateAvailableHours(availablePeriods, workService.getById(dto.getWorkId()));
-    }
-
-    public boolean isAvailable(AppointmentAvailableHoursDTO dto) {
-        if (!workService.isWorkForCustomer(dto.getWorkId(), dto.getCustomerId())) {
-            return false;
-        }
-//        Work work = workService.getById(dto.getWorkId());
-        LocalTime start = dto.getStartDate().toLocalTime();
-        LocalTime end = dto.getEndDate().toLocalTime();
-        TimePeriod timePeriod = new TimePeriod(start, end);
-        return getAvailableHours(dto).contains(timePeriod);
-    }
-
-    public List<TimePeriod> calculateAvailableHours(List<TimePeriod> availableTimePeriods, Work work) {
-        List<TimePeriod> availableHours = new ArrayList<>();
-        for (TimePeriod peroid : availableTimePeriods) {
-            TimePeriod workPeroid = new TimePeriod(peroid.getStart(), peroid.getStart().plusMinutes(work.getDuration()));
-            while (workPeroid.getEnd().isBefore(peroid.getEnd()) || workPeroid.getEnd().equals(peroid.getEnd())) {
-                availableHours.add(new TimePeriod(workPeroid.getStart(), workPeroid.getStart().plusMinutes(work.getDuration())));
-                workPeroid.setStart(workPeroid.getStart().plusMinutes(work.getDuration()));
-                workPeroid.setEnd(workPeroid.getEnd().plusMinutes(work.getDuration()));
-            }
-        }
-        return availableHours;
-    }
-
-    public List<TimePeriod> excludeAppointmentsFromTimePeriods(List<TimePeriod> periods, List<Appointment> appointments) {
-
-        appointments = appointments.stream().sorted().collect(Collectors.toList());
-        List<TimePeriod> toAdd = new ArrayList<>();
-
-        for (Appointment appointment : appointments) {
-            for (TimePeriod period : periods) {
-                LocalDateTime startDate = appointment.getStartDate();
-                LocalDateTime endDate = appointment.getEndDate();
-                if ((startDate.toLocalTime().isBefore(period.getStart()) || startDate.toLocalTime().equals(period.getStart()))
-                        && endDate.toLocalTime().isAfter(period.getStart()) && endDate.toLocalTime().isBefore(period.getEnd())) {
-                    period.setStart(endDate.toLocalTime());
-                }
-                if (startDate.toLocalTime().isAfter(period.getStart()) && startDate.toLocalTime().isBefore(period.getEnd())
-                        && endDate.toLocalTime().isAfter(period.getEnd()) || endDate.toLocalTime().equals(period.getEnd())) {
-                    period.setEnd(startDate.toLocalTime());
-                }
-                if (startDate.toLocalTime().isAfter(period.getStart()) && startDate.toLocalTime().isBefore(period.getEnd())) {
-                    toAdd.add(new TimePeriod(period.getStart(), startDate.toLocalTime()));
-                    period.setStart(endDate.toLocalTime());
-                }
-            }
-        }
-        periods.addAll(toAdd);
-        Collections.sort(periods);
-        return periods;
-    }
-
     public List<Appointment> getConfirmedAppointmentsByCustomerId(String customerId) {
         return repository.findConfirmedByCustomerId(customerId);
     }
@@ -228,7 +128,7 @@ public class AppointmentApplicationService {
 
     public void addMessageToAppointmentChat(String appointmentId, String authorId, ChatMessage chatMessage) {
         Appointment appointment = getAppointmentById(appointmentId);
-        if (appointment.getProvider().getId() == authorId || appointment.getCustomer().getId() == authorId) {
+        if (appointment.getProvider().getId().equals(authorId) || appointment.getCustomer().getId().equals(authorId)) {
             chatMessage.setAuthor(userService.findById(authorId));
             chatMessage.setAppointment(appointment);
             chatMessage.setCreatedAt(LocalDateTime.now());
