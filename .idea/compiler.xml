@@ -9,12 +9,16 @@
         <outputRelativeToContentRoot value="true" />
         <module name="spring-admin-server" />
         <module name="af-appointment" />
+        <module name="api" />
+        <module name="wms-query" />
+        <module name="wms-inventario" />
       </profile>
     </annotationProcessing>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="af-appointment" options="-parameters" />
+      <module name="api" options="-parameters" />
       <module name="spring-admin-server" options="-parameters" />
     </option>
   </component>

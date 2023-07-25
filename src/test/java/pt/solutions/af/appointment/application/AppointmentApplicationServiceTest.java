@@ -1,14 +1,12 @@
 package pt.solutions.af.appointment.application;
 
-import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.test.context.ActiveProfiles;
+import org.springframework.beans.factory.annotation.Autowired;
 import pt.solutions.af.appointment.application.dto.RegisterAppointmentDTO;
+import pt.solutions.af.appointment.repository.AppointmentRepository;
 import pt.solutions.af.commons.exception.ValidationException;
+import pt.solutions.af.util.ApplicationConfigIT;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -18,19 +16,22 @@ import java.time.temporal.TemporalAdjusters;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static pt.solutions.af.TestUtls.randomLong;
-import static pt.solutions.af.TestUtls.randomUUID;
-import static pt.solutions.af.appointment.AppointmentTestUtils.registerAppointment;
-import static pt.solutions.af.user.UserTestUtils.registerProvider;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
+import static pt.solutions.af.appointment.AppointmentTestUtils.anAppointment;
+import static pt.solutions.af.user.ProviderTestUtils.aProvider;
+import static pt.solutions.af.util.TestUtils.randomLong;
+import static pt.solutions.af.util.TestUtils.randomUUID;
 
-@DataJpaTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@ActiveProfiles("test")
-@RequiredArgsConstructor
-class AppointmentApplicationServiceTest {
+class AppointmentApplicationServiceTest extends ApplicationConfigIT {
 
-    private final AppointmentApplicationService service;
-    private final TestEntityManager em;
+    @Autowired
+    private AppointmentApplicationService service;
+
+    @Autowired
+    private AppointmentRepository repository;
+
 
     @Test
     @DisplayName("Should not create appointment in sundays")
@@ -83,10 +84,11 @@ class AppointmentApplicationServiceTest {
     public void shouldNotCreateAppointmentNotAvailableTest() {
         //given
 
-        var provider = registerProvider(em, "12345","Provider", "Test", "provider@provider.com");
-        var appointment = registerAppointment(em, provider);
+        var provider = aProvider("12345", "Provider", "Test", "provider@provider.com");
+        var appointment = anAppointment(provider);
         var startDate = LocalDateTime.now().plusMinutes(30);
         var endDate = LocalDateTime.now().plusHours(1);
+        when(repository.existsByProviderWithStartInPeriod(anyString(), any(), any())).thenReturn(false);
 
         //when
         var exception = assertThrows(ValidationException.class, () -> service.create(newAppointment(provider.getId(), startDate, endDate)));

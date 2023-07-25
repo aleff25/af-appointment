@@ -1,20 +1,16 @@
 package pt.solutions.af.user;
 
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import pt.solutions.af.user.model.User;
-import pt.solutions.af.user.model.provider.Provider;
+import pt.solutions.af.user.repository.UserRepository;
 
 public class UserTestUtils {
 
-    public static Provider registerProvider(TestEntityManager em, String id, String firstName, String lastName, String email) {
-        var user = registerUser(em, id, firstName, lastName, email, true);
-        var provider = new Provider();
-        provider.setId(user.getId());
-        em.persist(provider);
-        return provider;
+
+    public static void persist(UserRepository repository, User user) {
+        repository.save(user);
     }
 
-    private static User registerUser(TestEntityManager em, String id, String firstName, String lastName, String email, boolean provider) {
+    public static User aUser(String id, String firstName, String lastName, String email, boolean provider) {
         var user = User.builder()
                 .firstName(firstName)
                 .lastName(lastName)
@@ -22,7 +18,6 @@ public class UserTestUtils {
                 .provider(provider)
                 .build();
         user.setId(id);
-        em.persist(user);
         return user;
     }
 

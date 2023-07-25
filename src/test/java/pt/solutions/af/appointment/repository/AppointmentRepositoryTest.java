@@ -1,4 +1,4 @@
-package pt.solutions.af.appointment;
+package pt.solutions.af.appointment.repository;
 
 
 import org.junit.jupiter.api.DisplayName;
@@ -8,19 +8,18 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.ActiveProfiles;
-import pt.solutions.af.appointment.repository.AppointmentRepository;
 
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static pt.solutions.af.TestUtls.randomUUID;
-import static pt.solutions.af.appointment.AppointmentTestUtils.registerAppointment;
-import static pt.solutions.af.user.UserTestUtils.registerProvider;
+import static pt.solutions.af.appointment.AppointmentTestUtils.anAppointment;
+import static pt.solutions.af.user.ProviderTestUtils.aProvider;
+import static pt.solutions.af.util.TestUtils.randomUUID;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @ActiveProfiles("test")
-class AppointmentTest {
+class AppointmentRepositoryTest {
 
 
     @Autowired
@@ -35,8 +34,8 @@ class AppointmentTest {
     public void shouldFindByProviderIdWithStartInPeriodTest() {
         //given
         var providerId = randomUUID();
-        var provider = registerProvider(em, providerId,"Provider", "Test", "provider@provider.com");
-        var appointment = registerAppointment(em, provider);
+        var provider = aProvider(providerId, "Provider", "Test", "provider@provider.com");
+        var appointment = anAppointment(provider);
 
         //when
 
@@ -54,8 +53,8 @@ class AppointmentTest {
     public void shouldNotFindByProviderIdWithStartInPeriodTest() {
         //given
         var providerId = randomUUID();
-        var provider = registerProvider(em, providerId,"Provider", "Test", "provider@provider.com");
-        registerAppointment(em, provider);
+        var provider = aProvider(providerId, "Provider", "Test", "provider@provider.com");
+        anAppointment(provider);
 
         //when
 

@@ -1,9 +1,9 @@
-package pt.solutions.af;
+package pt.solutions.af.util;
 
 import java.util.Random;
 import java.util.UUID;
 
-public class TestUtls {
+public class TestUtils {
 
     public static Long randomLong() {
         return new Random().nextLong() * (99 - 1);

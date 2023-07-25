@@ -6,6 +6,9 @@
       <list>
         <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/../spring-admin-server/pom.xml" />
+        <option value="$PROJECT_DIR$/../../2771-spring-boot-main/pom.xml" />
+        <option value="$PROJECT_DIR$/../../Totvs/SL-WMSInventario/pom.xml" />
+        <option value="$PROJECT_DIR$/../../Totvs/SL-WMSQuery/pom.xml" />
       </list>
     </option>
   </component>
