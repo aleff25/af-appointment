@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 
 @Component("ValidatorProviderAvailable")
 @AllArgsConstructor
-public class ValidatorProviderAvailable implements AppointmentSchedulerValidator {
+public class ProviderAvailableValidator implements AppointmentSchedulerValidator {
 
     private AppointmentRepository repository;
     private WorkApplicationService workService;

@@ -8,12 +8,12 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 
 @Component("ValidatorTimeBefore")
-public class ValidatorTimeBefore implements AppointmentSchedulerValidator {
+public class TimeBeforeValidator implements AppointmentSchedulerValidator {
 
     public void validate(RegisterAppointmentDTO dto) {
-        var dataConsulta = dto.getStartDate();
+        var startDate = dto.getStartDate();
         var dateNow = LocalDateTime.now();
-        var diffInMinutes = Duration.between(dateNow, dataConsulta).toMinutes();
+        var diffInMinutes = Duration.between(dateNow, startDate).toMinutes();
 
         if (diffInMinutes < 30) {
             throw new ValidationException("Consulta deve ser agendada com antecedência mínima de 30 minutos");

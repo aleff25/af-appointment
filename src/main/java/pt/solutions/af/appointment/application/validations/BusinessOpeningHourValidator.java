@@ -7,7 +7,7 @@ import pt.solutions.af.commons.exception.ValidationException;
 import java.time.DayOfWeek;
 
 @Component
-public class ValidatorBusinessOpeningHour implements AppointmentSchedulerValidator {
+public class BusinessOpeningHourValidator implements AppointmentSchedulerValidator {
 
     public void validate(RegisterAppointmentDTO dto) {
         var appointmentDate = dto.getStartDate();

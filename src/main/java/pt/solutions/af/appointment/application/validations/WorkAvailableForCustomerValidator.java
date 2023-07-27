@@ -8,7 +8,7 @@ import pt.solutions.af.work.application.WorkApplicationService;
 
 @Component("ValidatorWorkAvailableForCustomer")
 @AllArgsConstructor
-public class ValidatorWorkAvailableForCustomer implements AppointmentSchedulerValidator {
+public class WorkAvailableForCustomerValidator implements AppointmentSchedulerValidator {
 
     private WorkApplicationService workService;
 

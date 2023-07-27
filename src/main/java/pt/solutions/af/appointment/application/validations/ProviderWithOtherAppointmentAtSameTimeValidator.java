@@ -9,7 +9,7 @@ import pt.solutions.af.commons.exception.ValidationException;
 
 @Component
 @AllArgsConstructor
-public class ValidatorProviderWithOtherAppointmentAtSameTime implements AppointmentSchedulerValidator {
+public class ProviderWithOtherAppointmentAtSameTimeValidator implements AppointmentSchedulerValidator {
 
     private AppointmentRepository repository;
 
